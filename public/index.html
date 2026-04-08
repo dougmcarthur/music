@@ -759,6 +759,58 @@
       }
     }
 
+    function getDurationFromBlob(blob) {
+      return new Promise((resolve) => {
+        const media = document.createElement("audio");
+        media.preload = "metadata";
+
+        const objectUrl = URL.createObjectURL(blob);
+        const cleanup = () => {
+          media.removeAttribute("src");
+          URL.revokeObjectURL(objectUrl);
+        };
+
+        media.addEventListener("loadedmetadata", () => {
+          const duration = Number(media.duration);
+          cleanup();
+          resolve(Number.isFinite(duration) ? duration : 0);
+        }, { once: true });
+
+        media.addEventListener("error", () => {
+          cleanup();
+          resolve(0);
+        }, { once: true });
+
+        media.src = objectUrl;
+        media.load();
+      });
+    }
+
+    async function preloadTrackData() {
+      for (let i = 0; i < tracks.length; i++) {
+        const track = tracks[i];
+
+        try {
+          const res = await fetch(downloadUrlForFile(track.file), { cache: "force-cache" });
+          if (!res.ok) continue;
+
+          const blob = await res.blob();
+
+          const duration = await getDurationFromBlob(blob);
+          if (duration > 0) {
+            durations[i] = duration;
+          }
+
+          if (!artworkCache.has(track.file)) {
+            const artworkUrl = await readArtworkFromBlob(blob);
+            artworkCache.set(track.file, artworkUrl || null);
+          }
+        } catch {
+          // Continue preloading remaining tracks even if one fails.
+        }
+      }
+    }
+
     async function updateNowPlayingArtwork(track) {
       const token = ++artworkRequestToken;
       setNowPlayingArtwork(null);
@@ -840,7 +892,11 @@
     }
 
     function syncNowPlayingFromAmplitude(forceArtworkUpdate = false) {
-      const nextIndex = Number(Amplitude.getActiveIndex());
+      const activeIndex = Number(Amplitude.getActiveIndex());
+      const nextIndex = Number.isInteger(activeIndex)
+        ? activeIndex
+        : (currentIndex >= 0 ? currentIndex : 0);
+
       if (!Number.isInteger(nextIndex) || nextIndex < 0 || nextIndex >= tracks.length) {
         return;
       }
@@ -986,6 +1042,8 @@
 
         renderTracklist();
         if (tracks.length > 0) {
+          await preloadTrackData();
+          renderTracklist();
           initAmplitudePlayer();
         }
         btnDownloadAll.disabled = tracks.length === 0;
