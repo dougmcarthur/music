@@ -442,9 +442,34 @@
     function titleFromFilename(name) {
       return name
         .replace(/\.mp3$/i, "")
-        .replace(/^\d+[-_.\s]+/, "")
         .replace(/[-_]/g, " ")
-        .replace(/\b\w/g, c => c.toUpperCase());
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+
+    function parseTrackFileName(file) {
+      const base = file.replace(/\.mp3$/i, "").trim();
+      const parts = base.split(" - ").map(p => p.trim()).filter(Boolean);
+
+      // Expected format: track number - artist - title.mp3
+      if (parts.length >= 3 && /^\d+$/.test(parts[0])) {
+        const trackNumber = Number(parts[0]);
+        const artist = parts[1];
+        const title = parts.slice(2).join(" - ");
+        return {
+          trackNumber,
+          artist,
+          title,
+          displayTitle: `${artist} - ${title}`,
+        };
+      }
+
+      return {
+        trackNumber: null,
+        artist: "",
+        title: titleFromFilename(file),
+        displayTitle: titleFromFilename(file),
+      };
     }
 
     function renderTracklist() {
@@ -482,7 +507,7 @@
       currentIndex = index;
       const track = tracks[index];
       audio.src = track.url;
-      nowPlayingTitle.textContent = track.title;
+      nowPlayingTitle.textContent = track.displayTitle;
       progressFill.style.width = "0%";
       timeCurrent.textContent = "0:00";
       timeTotal.textContent = durations[index] ? formatTime(durations[index]) : "0:00";
@@ -561,11 +586,24 @@
           throw new Error("No tracks found");
         }
 
-        tracks = data.tracks.map(track => ({
-          url: track.url,
-          title: titleFromFilename(track.file),
-          file: track.file,
-        }));
+        tracks = data.tracks
+          .map(track => {
+            const parsed = parseTrackFileName(track.file);
+            return {
+              url: track.url,
+              file: track.file,
+              title: parsed.title,
+              artist: parsed.artist,
+              trackNumber: parsed.trackNumber,
+              displayTitle: parsed.displayTitle,
+            };
+          })
+          .sort((a, b) => {
+            if (a.trackNumber !== null && b.trackNumber !== null) {
+              return a.trackNumber - b.trackNumber;
+            }
+            return a.file.localeCompare(b.file, undefined, { numeric: true });
+          });
 
         renderTracklist();
       } catch (err) {
