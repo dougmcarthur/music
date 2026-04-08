@@ -616,9 +616,9 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/amplitudejs@5.3.2/dist/amplitude.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jsmediatags@3.9.7/dist/jsmediatags.min.js"></script>
   <script>
     const ALBUM_BASE = "https://dougmcarthur.net/2026-album/";
+    const COVER_ART_URL = `${ALBUM_BASE}folder.jpg`;
     const TRACKS_API = "/api/tracks";
     const DOWNLOAD_API = "/api/download";
     const STREAM_API = "/api/stream";
@@ -641,10 +641,6 @@
     let tracks = [];
     let currentIndex = -1;
     let durations = {};
-    const artworkCache = new Map();
-    let artworkRequestToken = 0;
-    let lastArtworkFile = "";
-    let initialArtworkRetryDone = false;
 
     function formatTime(sec) {
       if (isNaN(sec)) return "0:00";
@@ -712,65 +708,6 @@
       }
     }
 
-    function readArtworkFromSource(source) {
-      return new Promise((resolve) => {
-        if (!window.jsmediatags) {
-          resolve(null);
-          return;
-        }
-
-        window.jsmediatags.read(source, {
-          onSuccess: (tag) => {
-            const picture = tag?.tags?.picture;
-            if (!picture || !picture.data || picture.data.length === 0) {
-              resolve(null);
-              return;
-            }
-
-            const byteArray = picture.data instanceof Uint8Array
-              ? picture.data
-              : new Uint8Array(picture.data);
-            const imageBlob = new Blob([byteArray], { type: picture.format || "image/jpeg" });
-            resolve(URL.createObjectURL(imageBlob));
-          },
-          onError: () => resolve(null),
-        });
-      });
-    }
-
-    function readArtworkFromBlob(blob) {
-      return readArtworkFromSource(blob);
-    }
-
-    function readArtworkFromUrl(url) {
-      return readArtworkFromSource(url);
-    }
-
-    async function getArtworkForTrack(track) {
-      if (artworkCache.has(track.file)) {
-        return artworkCache.get(track.file);
-      }
-
-      try {
-        const res = await fetch(downloadUrlForFile(track.file), { cache: "force-cache" });
-        if (!res.ok) {
-          artworkCache.set(track.file, null);
-          return null;
-        }
-
-        const blob = await res.blob();
-        let artworkUrl = await readArtworkFromBlob(blob);
-        if (!artworkUrl) {
-          artworkUrl = await readArtworkFromUrl(streamUrlForFile(track.file));
-        }
-        artworkCache.set(track.file, artworkUrl || null);
-        return artworkUrl || null;
-      } catch {
-        artworkCache.set(track.file, null);
-        return null;
-      }
-    }
-
     function getDurationFromBlob(blob) {
       return new Promise((resolve) => {
         const media = document.createElement("audio");
@@ -813,24 +750,10 @@
             durations[i] = duration;
           }
 
-          if (!artworkCache.has(track.file)) {
-            const artworkUrl = await readArtworkFromBlob(blob);
-            artworkCache.set(track.file, artworkUrl || null);
-          }
         } catch {
           // Continue preloading remaining tracks even if one fails.
         }
       }
-    }
-
-    async function updateNowPlayingArtwork(track) {
-      const token = ++artworkRequestToken;
-      setNowPlayingArtwork(null);
-
-      const artworkUrl = await getArtworkForTrack(track);
-      if (token !== artworkRequestToken) return;
-
-      setNowPlayingArtwork(artworkUrl);
     }
 
     function downloadSingleTrack(file) {
@@ -916,20 +839,7 @@
       currentIndex = nextIndex;
       const track = tracks[currentIndex];
       nowPlayingTitle.textContent = track.displayTitle;
-
-      if (forceArtworkUpdate || lastArtworkFile !== track.file) {
-        lastArtworkFile = track.file;
-        void updateNowPlayingArtwork(track);
-
-        if (!initialArtworkRetryDone && nextIndex === 0) {
-          setTimeout(() => {
-            if (!nowPlayingMedia.classList.contains("visible")) {
-              initialArtworkRetryDone = true;
-              void updateNowPlayingArtwork(track);
-            }
-          }, 900);
-        }
-      }
+      setNowPlayingArtwork(COVER_ART_URL);
 
       updatePlayIcon();
       updateActiveTrackStyling();
