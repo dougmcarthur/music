@@ -4,11 +4,27 @@ A simple Cloudflare Pages site with an embedded audio player for listening to de
 
 ## How it works
 
-The page dynamically fetches the track listing from `https://dougmcarthur.net/2026-album/`, parses the directory index for `.mp3` files, and populates a custom HTML5 audio player. No build step required — it's a single static HTML file.
+The page loads tracks through a Cloudflare Pages Function (`/api/tracks`) that fetches and parses `https://dougmcarthur.net/2026-album/` server-side, then populates a custom HTML5 audio player. This avoids browser CORS issues when listing `.mp3` files from the remote directory.
 
 ## Deploy
 
 Deploys automatically via [Cloudflare Pages](https://pages.cloudflare.com/) on push.
+
+Cloudflare must treat this repo as a Pages project, not a Workers project.
+
+Use these Pages settings:
+
+- Framework preset: None
+- Build command: leave empty
+- Build output directory: `public`
+
+If you use a custom deploy command, it must be:
+
+```bash
+npx wrangler pages deploy public
+```
+
+Do not use `npx wrangler deploy` for this repo. That is a Workers command and will fail in Cloudflare Pages.
 
 To preview locally:
 

@@ -413,6 +413,7 @@
 
   <script>
     const ALBUM_BASE = "https://dougmcarthur.net/2026-album/";
+    const TRACKS_API = "/api/tracks";
 
     const audio = document.getElementById("audio");
     const tracklistEl = document.getElementById("tracklist");
@@ -553,24 +554,18 @@
 
     async function loadTracks() {
       try {
-        const res = await fetch(ALBUM_BASE);
-        const html = await res.text();
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, "text/html");
-        const links = Array.from(doc.querySelectorAll("a[href]"))
-          .map(a => a.getAttribute("href"))
-          .filter(href => /\.mp3$/i.test(href))
-          .map(href => href.replace(/^.*\//, ""));
+        const res = await fetch(TRACKS_API, { cache: "no-store" });
+        if (!res.ok) throw new Error(`Track API failed (${res.status})`);
+        const data = await res.json();
+        if (!Array.isArray(data.tracks) || data.tracks.length === 0) {
+          throw new Error("No tracks found");
+        }
 
-        if (links.length === 0) throw new Error("No tracks found");
-
-        tracks = links
-          .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
-          .map(file => ({
-            url: ALBUM_BASE + file,
-            title: titleFromFilename(file),
-            file,
-          }));
+        tracks = data.tracks.map(track => ({
+          url: track.url,
+          title: titleFromFilename(track.file),
+          file: track.file,
+        }));
 
         renderTracklist();
       } catch (err) {
