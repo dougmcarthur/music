@@ -645,6 +645,7 @@
     let durations = {};
     const artworkCache = new Map();
     let artworkRequestToken = 0;
+    let hasUserInitiatedPlayback = false;
 
     function formatTime(sec) {
       if (isNaN(sec)) return "0:00";
@@ -811,6 +812,38 @@
       }
     }
 
+    async function ensurePlaybackStarted() {
+      const tryPlay = async () => {
+        try {
+          await audio.play();
+          return true;
+        } catch {
+          return false;
+        }
+      };
+
+      if (await tryPlay()) return;
+
+      const waitForAndRetry = (eventName) =>
+        new Promise((resolve) => {
+          const timeoutId = setTimeout(() => {
+            audio.removeEventListener(eventName, onReady);
+            resolve(false);
+          }, 1500);
+
+          const onReady = async () => {
+            clearTimeout(timeoutId);
+            resolve(await tryPlay());
+          };
+
+          audio.addEventListener(eventName, onReady, { once: true });
+        });
+
+      if (await waitForAndRetry("loadedmetadata")) return;
+      if (await waitForAndRetry("canplay")) return;
+      await waitForAndRetry("canplaythrough");
+    }
+
     function renderTracklist() {
       tracklistEl.innerHTML = "";
       tracks.forEach((track, i) => {
@@ -829,7 +862,10 @@
           </button>
         `;
 
-        item.addEventListener("click", () => loadTrack(i, true));
+        item.addEventListener("click", () => {
+          hasUserInitiatedPlayback = true;
+          loadTrack(i, true);
+        });
 
         const dlBtn = item.querySelector(".track-download");
         dlBtn.addEventListener("click", (e) => {
@@ -861,6 +897,7 @@
       const track = tracks[index];
       audio.autoplay = autoplay;
       audio.src = streamUrlForFile(track.file);
+      audio.load();
       nowPlayingTitle.textContent = track.displayTitle;
       updateNowPlayingArtwork(track);
 
@@ -869,27 +906,21 @@
       timeTotal.textContent = durations[index] ? formatTime(durations[index]) : "0:00";
       renderTracklist();
 
-      if (autoplay) {
-        const playWhenReady = () => {
-          audio.play().catch(() => {});
-        };
-
-        if (audio.readyState >= 2) {
-          playWhenReady();
-        } else {
-          audio.addEventListener("canplay", playWhenReady, { once: true });
-        }
+      if (autoplay && hasUserInitiatedPlayback) {
+        void ensurePlaybackStarted();
       }
     }
 
     function togglePlay() {
       if (currentIndex < 0 && tracks.length > 0) {
+        hasUserInitiatedPlayback = true;
         loadTrack(0, true);
         return;
       }
 
       if (audio.paused) {
-        audio.play().catch(() => {});
+        hasUserInitiatedPlayback = true;
+        void ensurePlaybackStarted();
       } else {
         audio.pause();
       }
