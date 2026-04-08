@@ -88,7 +88,7 @@
 
     .sidebar-blurb {
       margin-top: 16px;
-      margin-bottom: 10px;
+      margin-bottom: 14px;
       color: var(--text-dim);
       font-size: 0.9rem;
       line-height: 1.55;
@@ -99,7 +99,7 @@
       grid-template-columns: repeat(3, 44px);
       justify-content: center;
       gap: 10px 15px;
-      margin-top: 0;
+      margin-top: 6px;
       padding-top: 0;
       border-top: none;
     }
@@ -516,7 +516,6 @@
 
       .sidebar {
         flex: 0 0 33%;
-        min-height: 76vh;
         position: sticky;
         top: 20px;
       }
@@ -623,6 +622,7 @@
     const ALBUM_BASE = "https://dougmcarthur.net/2026-album/";
     const TRACKS_API = "/api/tracks";
     const DOWNLOAD_API = "/api/download";
+    const STREAM_API = "/api/stream";
 
     const audio = document.getElementById("audio");
     const tracklistEl = document.getElementById("tracklist");
@@ -689,6 +689,10 @@
       return `${DOWNLOAD_API}?file=${encodeURIComponent(file)}`;
     }
 
+    function streamUrlForFile(file) {
+      return `${STREAM_API}?file=${encodeURIComponent(file)}`;
+    }
+
     function triggerBrowserDownload(url, fileName) {
       const link = document.createElement("a");
       link.href = url;
@@ -718,12 +722,14 @@
         window.jsmediatags.read(blob, {
           onSuccess: (tag) => {
             const picture = tag?.tags?.picture;
-            if (!picture || !Array.isArray(picture.data) || picture.data.length === 0) {
+            if (!picture || !picture.data || picture.data.length === 0) {
               resolve(null);
               return;
             }
 
-            const byteArray = new Uint8Array(picture.data);
+            const byteArray = picture.data instanceof Uint8Array
+              ? picture.data
+              : new Uint8Array(picture.data);
             const imageBlob = new Blob([byteArray], { type: picture.format || "image/jpeg" });
             resolve(URL.createObjectURL(imageBlob));
           },
@@ -854,7 +860,7 @@
       currentIndex = index;
       const track = tracks[index];
       audio.autoplay = autoplay;
-      audio.src = track.url;
+      audio.src = streamUrlForFile(track.file);
       nowPlayingTitle.textContent = track.displayTitle;
       updateNowPlayingArtwork(track);
 
