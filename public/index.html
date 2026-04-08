@@ -46,7 +46,7 @@
 
     .container {
       width: 100%;
-      max-width: 620px;
+      max-width: 600px;
       animation: fadeIn 0.55s ease;
     }
 
@@ -57,8 +57,8 @@
     }
 
     .profile-pic {
-      width: 120px;
-      height: 120px;
+      width: 140px;
+      height: 140px;
       border-radius: 16px;
       object-fit: cover;
       border: 3px solid #fff;
@@ -67,7 +67,7 @@
     }
 
     .header h1 {
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       font-weight: 600;
       letter-spacing: 0.01em;
       color: var(--text);
@@ -82,22 +82,39 @@
     .social-icons {
       display: flex;
       justify-content: center;
-      gap: 12px;
+      gap: 15px;
       margin-top: 14px;
       flex-wrap: wrap;
     }
 
     .social-icons a {
       color: var(--text);
-      font-size: 1.12rem;
+      font-size: 1.3rem;
       text-decoration: none;
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: transform 0.2s, background 0.2s, color 0.2s;
+    }
+
+    .section-heading {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin: 32px 0 10px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+      color: var(--text-dim);
+    }
+
+    .section-description {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      margin: -2px 0 16px;
+      line-height: 1.5;
     }
 
     .social-icons a:hover {
@@ -110,10 +127,10 @@
     .player {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 14px;
       padding: 24px;
       margin-bottom: 14px;
-      box-shadow: var(--shadow);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
     }
 
     .now-playing {
@@ -271,7 +288,7 @@
     /* Track list */
     .tracklist {
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
@@ -415,6 +432,8 @@
     .footer {
       margin-top: 48px;
       text-align: center;
+      color: #999;
+      font-size: 0.72rem;
     }
 
     .footer a {
@@ -482,8 +501,12 @@
       }
 
       .profile-pic {
-        width: 104px;
-        height: 104px;
+        width: 120px;
+        height: 120px;
+      }
+
+      .section-description {
+        font-size: 0.86rem;
       }
     }
   </style>
@@ -503,6 +526,9 @@
         <a href="https://soundcloud.com/dougmcarthur" title="SoundCloud" aria-label="SoundCloud"><i class="fab fa-soundcloud"></i></a>
       </div>
     </header>
+
+    <h2 class="section-heading">2026 Album Demos</h2>
+    <p class="section-description">Stream preview tracks below, download single songs, or grab the full ZIP.</p>
 
     <div class="player">
       <div class="now-playing">
@@ -555,6 +581,7 @@
 
     <footer class="footer">
       <a href="https://links.dougmcarthur.net">dougmcarthur.net</a>
+      <div>© 2026 Doug McArthur Music</div>
     </footer>
   </div>
 
@@ -746,6 +773,20 @@
       }
     }
 
+    function playNextTrack({ autoplay = true, wrap = false } = {}) {
+      if (!tracks.length) return;
+
+      const nextIndex = currentIndex + 1;
+      if (nextIndex < tracks.length) {
+        loadTrack(nextIndex, autoplay);
+        return;
+      }
+
+      if (wrap) {
+        loadTrack(0, autoplay);
+      }
+    }
+
     function updatePlayIcon() {
       const playing = !audio.paused;
       iconPlay.style.display = playing ? "none" : "block";
@@ -756,11 +797,8 @@
     audio.addEventListener("play", updatePlayIcon);
     audio.addEventListener("pause", updatePlayIcon);
     audio.addEventListener("ended", () => {
-      if (currentIndex < tracks.length - 1) {
-        loadTrack(currentIndex + 1, true);
-      } else {
-        updatePlayIcon();
-      }
+      playNextTrack({ autoplay: true, wrap: false });
+      updatePlayIcon();
     });
 
     audio.addEventListener("timeupdate", () => {
@@ -791,7 +829,7 @@
       if (currentIndex > 0) loadTrack(currentIndex - 1, !audio.paused);
     });
     btnNext.addEventListener("click", () => {
-      if (currentIndex < tracks.length - 1) loadTrack(currentIndex + 1, !audio.paused);
+      playNextTrack({ autoplay: !audio.paused, wrap: false });
     });
     btnDownloadAll.addEventListener("click", downloadAllAsZip);
 
@@ -824,6 +862,9 @@
           });
 
         renderTracklist();
+        if (tracks.length > 0) {
+          loadTrack(0, false);
+        }
         btnDownloadAll.disabled = tracks.length === 0;
       } catch (err) {
         tracklistEl.innerHTML = `<div class="error">Couldn't load tracks. <a href="${ALBUM_BASE}" style="color:inherit;text-decoration:underline">Browse directly →</a></div>`;
