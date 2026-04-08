@@ -1,0 +1,12 @@
+{
+  "name": "music",
+  "version": "1.0.0",
+  "description": "Doug McArthur — 2026 Album Demo Player",
+  "scripts": {
+    "dev": "wrangler pages dev public",
+    "deploy": "wrangler pages deploy public"
+  },
+  "devDependencies": {
+    "wrangler": "^3"
+  }
+}
