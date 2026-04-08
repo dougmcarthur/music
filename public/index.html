@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Doug McArthur — 2026 Album Demos</title>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --surface: #141414;
+      --surface-hover: #1c1c1c;
+      --border: #222;
+      --text: #f0f0f0;
+      --text-dim: #888;
+      --text-dimmer: #444;
+      --accent: #ffffff;
+      --progress-bg: #2a2a2a;
+      --progress-fill: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 64px 24px 80px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 540px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .header h1 {
+      font-size: 1.125rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    .header p {
+      margin-top: 8px;
+      font-size: 0.8125rem;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+    }
+
+    /* Player */
+    .player {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 24px;
+      margin-bottom: 4px;
+    }
+
+    .now-playing {
+      margin-bottom: 20px;
+    }
+
+    .now-playing-label {
+      font-size: 0.6875rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-dimmer);
+      margin-bottom: 6px;
+    }
+
+    .now-playing-title {
+      font-size: 0.9375rem;
+      font-weight: 400;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Progress */
+    .progress-wrap {
+      margin-bottom: 16px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 2px;
+      background: var(--progress-bg);
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .progress-bar::-webkit-slider-runnable-track {
+      height: 2px;
+      background: transparent;
+      border-radius: 2px;
+    }
+
+    .progress-bar::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      margin-top: -4px;
+      cursor: pointer;
+    }
+
+    .progress-bar::-moz-range-track {
+      height: 2px;
+      background: var(--progress-bg);
+      border-radius: 2px;
+    }
+
+    .progress-bar::-moz-range-thumb {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: none;
+      cursor: pointer;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 2px;
+      background: var(--progress-bg);
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: var(--progress-fill);
+      border-radius: 2px;
+      width: 0%;
+      pointer-events: none;
+      transition: width 0.1s linear;
+    }
+
+    .progress-bar-bg::after {
+      content: '';
+      position: absolute;
+      top: -6px;
+      bottom: -6px;
+      left: 0;
+      right: 0;
+    }
+
+    .time-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.6875rem;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+
+    .ctrl-btn {
+      background: none;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.15s;
+      line-height: 0;
+    }
+
+    .ctrl-btn:hover {
+      color: var(--accent);
+    }
+
+    .ctrl-btn.play {
+      color: var(--text);
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .ctrl-btn.play:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .ctrl-btn svg {
+      display: block;
+    }
+
+    /* Track list */
+    .tracklist {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .track-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 20px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.1s;
+      gap: 16px;
+    }
+
+    .track-item:last-child {
+      border-bottom: none;
+    }
+
+    .track-item:hover {
+      background: var(--surface-hover);
+    }
+
+    .track-item.active {
+      background: var(--surface);
+    }
+
+    .track-num {
+      font-size: 0.6875rem;
+      color: var(--text-dimmer);
+      font-variant-numeric: tabular-nums;
+      min-width: 20px;
+      text-align: right;
+    }
+
+    .track-item.active .track-num {
+      color: var(--text-dim);
+    }
+
+    .track-name {
+      flex: 1;
+      font-size: 0.875rem;
+      color: var(--text-dim);
+      font-weight: 400;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .track-item.active .track-name {
+      color: var(--text);
+    }
+
+    .track-duration {
+      font-size: 0.6875rem;
+      color: var(--text-dimmer);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
+    }
+
+    .track-item.active .track-duration {
+      color: var(--text-dim);
+    }
+
+    /* Loading state */
+    .loading {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-dimmer);
+      font-size: 0.8125rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .error {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-dimmer);
+      font-size: 0.8125rem;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 48px;
+      text-align: center;
+    }
+
+    .footer a {
+      font-size: 0.75rem;
+      color: var(--text-dimmer);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: color 0.15s;
+    }
+
+    .footer a:hover {
+      color: var(--text-dim);
+    }
+
+    /* Playing indicator */
+    .playing-dots {
+      display: none;
+      gap: 3px;
+      align-items: flex-end;
+      height: 12px;
+    }
+
+    .track-item.active.is-playing .playing-dots {
+      display: flex;
+    }
+
+    .track-item.active.is-playing .track-num {
+      display: none;
+    }
+
+    .playing-dots span {
+      width: 2px;
+      background: var(--text-dim);
+      border-radius: 1px;
+      animation: bounce 1.2s ease infinite;
+    }
+
+    .playing-dots span:nth-child(1) { height: 6px; animation-delay: 0s; }
+    .playing-dots span:nth-child(2) { height: 10px; animation-delay: 0.2s; }
+    .playing-dots span:nth-child(3) { height: 6px; animation-delay: 0.4s; }
+
+    @keyframes bounce {
+      0%, 100% { transform: scaleY(0.6); }
+      50% { transform: scaleY(1); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>Doug McArthur</h1>
+      <p>2026 Album — Demos</p>
+    </header>
+
+    <div class="player">
+      <div class="now-playing">
+        <div class="now-playing-label">Now Playing</div>
+        <div class="now-playing-title" id="now-playing-title">—</div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-bar-bg" id="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+        <div class="time-row">
+          <span id="time-current">0:00</span>
+          <span id="time-total">0:00</span>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="ctrl-btn" id="btn-prev" aria-label="Previous track">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/>
+          </svg>
+        </button>
+        <button class="ctrl-btn play" id="btn-play" aria-label="Play / pause">
+          <svg id="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5v14l11-7z"/>
+          </svg>
+          <svg id="icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+            <path d="M6 19h4V5H6zm8-14v14h4V5z"/>
+          </svg>
+        </button>
+        <button class="ctrl-btn" id="btn-next" aria-label="Next track">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M6 18l8.5-6L6 6v12zm2-8.14 5.02 2.14L8 14.14V9.86zM16 6h2v12h-2z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="tracklist" id="tracklist">
+      <div class="loading">Loading tracks…</div>
+    </div>
+
+    <footer class="footer">
+      <a href="https://links.dougmcarthur.net">dougmcarthur.net</a>
+    </footer>
+  </div>
+
+  <audio id="audio" preload="none"></audio>
+
+  <script>
+    const ALBUM_BASE = "https://dougmcarthur.net/2026-album/";
+
+    const audio = document.getElementById("audio");
+    const tracklistEl = document.getElementById("tracklist");
+    const nowPlayingTitle = document.getElementById("now-playing-title");
+    const progressFill = document.getElementById("progress-fill");
+    const timeCurrent = document.getElementById("time-current");
+    const timeTotal = document.getElementById("time-total");
+    const btnPlay = document.getElementById("btn-play");
+    const btnPrev = document.getElementById("btn-prev");
+    const btnNext = document.getElementById("btn-next");
+    const iconPlay = document.getElementById("icon-play");
+    const iconPause = document.getElementById("icon-pause");
+    const progressBarBg = document.getElementById("progress-bar-bg");
+
+    let tracks = [];
+    let currentIndex = -1;
+    let durations = {};
+
+    function formatTime(sec) {
+      if (isNaN(sec)) return "0:00";
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${m}:${s.toString().padStart(2, "0")}`;
+    }
+
+    function titleFromFilename(name) {
+      return name
+        .replace(/\.mp3$/i, "")
+        .replace(/^\d+[-_.\s]+/, "")
+        .replace(/[-_]/g, " ")
+        .replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    function renderTracklist() {
+      tracklistEl.innerHTML = "";
+      tracks.forEach((track, i) => {
+        const item = document.createElement("div");
+        item.className = "track-item" + (i === currentIndex ? " active" : "");
+        item.dataset.index = i;
+        item.innerHTML = `
+          <div class="playing-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="track-num">${i + 1}</span>
+          <span class="track-name">${track.title}</span>
+          <span class="track-duration" id="dur-${i}">${durations[i] ? formatTime(durations[i]) : ""}</span>
+        `;
+        item.addEventListener("click", () => loadTrack(i, true));
+        tracklistEl.appendChild(item);
+      });
+    }
+
+    function updateActiveTrack() {
+      document.querySelectorAll(".track-item").forEach((el, i) => {
+        el.classList.toggle("active", i === currentIndex);
+        el.classList.remove("is-playing");
+      });
+      if (currentIndex >= 0 && !audio.paused) {
+        const activeEl = document.querySelector(`.track-item[data-index="${currentIndex}"]`);
+        if (activeEl) activeEl.classList.add("is-playing");
+      }
+    }
+
+    function loadTrack(index, autoplay = false) {
+      if (index < 0 || index >= tracks.length) return;
+      currentIndex = index;
+      const track = tracks[index];
+      audio.src = track.url;
+      nowPlayingTitle.textContent = track.title;
+      progressFill.style.width = "0%";
+      timeCurrent.textContent = "0:00";
+      timeTotal.textContent = durations[index] ? formatTime(durations[index]) : "0:00";
+      renderTracklist();
+      if (autoplay) {
+        audio.play().catch(() => {});
+      }
+    }
+
+    function togglePlay() {
+      if (currentIndex < 0 && tracks.length > 0) {
+        loadTrack(0, true);
+        return;
+      }
+      if (audio.paused) {
+        audio.play().catch(() => {});
+      } else {
+        audio.pause();
+      }
+    }
+
+    function updatePlayIcon() {
+      const playing = !audio.paused;
+      iconPlay.style.display = playing ? "none" : "block";
+      iconPause.style.display = playing ? "block" : "none";
+      updateActiveTrack();
+    }
+
+    audio.addEventListener("play", updatePlayIcon);
+    audio.addEventListener("pause", updatePlayIcon);
+    audio.addEventListener("ended", () => {
+      if (currentIndex < tracks.length - 1) {
+        loadTrack(currentIndex + 1, true);
+      } else {
+        updatePlayIcon();
+      }
+    });
+
+    audio.addEventListener("timeupdate", () => {
+      if (!audio.duration) return;
+      const pct = (audio.currentTime / audio.duration) * 100;
+      progressFill.style.width = `${pct}%`;
+      timeCurrent.textContent = formatTime(audio.currentTime);
+    });
+
+    audio.addEventListener("loadedmetadata", () => {
+      timeTotal.textContent = formatTime(audio.duration);
+      if (currentIndex >= 0) {
+        durations[currentIndex] = audio.duration;
+        const durEl = document.getElementById(`dur-${currentIndex}`);
+        if (durEl) durEl.textContent = formatTime(audio.duration);
+      }
+    });
+
+    progressBarBg.addEventListener("click", e => {
+      if (!audio.duration) return;
+      const rect = progressBarBg.getBoundingClientRect();
+      const pct = (e.clientX - rect.left) / rect.width;
+      audio.currentTime = pct * audio.duration;
+    });
+
+    btnPlay.addEventListener("click", togglePlay);
+    btnPrev.addEventListener("click", () => {
+      if (currentIndex > 0) loadTrack(currentIndex - 1, !audio.paused);
+    });
+    btnNext.addEventListener("click", () => {
+      if (currentIndex < tracks.length - 1) loadTrack(currentIndex + 1, !audio.paused);
+    });
+
+    async function loadTracks() {
+      try {
+        const res = await fetch(ALBUM_BASE);
+        const html = await res.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+        const links = Array.from(doc.querySelectorAll("a[href]"))
+          .map(a => a.getAttribute("href"))
+          .filter(href => /\.mp3$/i.test(href))
+          .map(href => href.replace(/^.*\//, ""));
+
+        if (links.length === 0) throw new Error("No tracks found");
+
+        tracks = links
+          .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+          .map(file => ({
+            url: ALBUM_BASE + file,
+            title: titleFromFilename(file),
+            file,
+          }));
+
+        renderTracklist();
+      } catch (err) {
+        tracklistEl.innerHTML = `<div class="error">Couldn't load tracks. <a href="${ALBUM_BASE}" style="color:inherit;text-decoration:underline">Browse directly →</a></div>`;
+      }
+    }
+
+    loadTracks();
+  </script>
+</body>
+</html>
