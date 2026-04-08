@@ -4,18 +4,26 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Doug McArthur — 2026 Album Demos</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg: #0a0a0a;
-      --surface: #141414;
-      --surface-hover: #1c1c1c;
-      --border: #222;
-      --text: #f0f0f0;
-      --text-dim: #888;
-      --text-dimmer: #444;
-      --accent: #ffffff;
-      --progress-bg: #2a2a2a;
-      --progress-fill: #ffffff;
+      --bg-color: #f8f9fa;
+      --bg-grad-a: #f5f7f9;
+      --bg-grad-b: #f0f4f8;
+      --surface: #ffffff;
+      --surface-hover: #fdfdfd;
+      --border: rgba(0, 0, 0, 0.08);
+      --text: #1a1a1a;
+      --text-dim: #666;
+      --text-dimmer: #8f8f8f;
+      --accent: rgba(103, 156, 139, 1);
+      --accent-soft: rgba(103, 156, 139, 0.1);
+      --progress-bg: #e8ecef;
+      --progress-fill: rgba(103, 156, 139, 1);
+      --shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
     }
 
     * {
@@ -25,50 +33,87 @@
     }
 
     body {
-      background: var(--bg);
+      background: linear-gradient(135deg, var(--bg-grad-a) 0%, var(--bg-grad-b) 50%, var(--bg-grad-a) 100%);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-family: "Poppins", -apple-system, system-ui, sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 64px 24px 80px;
+      padding: 28px 16px 80px;
       -webkit-font-smoothing: antialiased;
     }
 
     .container {
       width: 100%;
-      max-width: 540px;
+      max-width: 620px;
+      animation: fadeIn 0.55s ease;
     }
 
     /* Header */
     .header {
       text-align: center;
-      margin-bottom: 48px;
+      margin-bottom: 26px;
+    }
+
+    .profile-pic {
+      width: 120px;
+      height: 120px;
+      border-radius: 16px;
+      object-fit: cover;
+      border: 3px solid #fff;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      margin-bottom: 16px;
     }
 
     .header h1 {
-      font-size: 1.125rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
+      font-size: 1.35rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
       color: var(--text);
     }
 
     .header p {
-      margin-top: 8px;
-      font-size: 0.8125rem;
+      margin-top: 6px;
+      font-size: 0.9rem;
       color: var(--text-dim);
-      letter-spacing: 0.04em;
+    }
+
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .social-icons a {
+      color: var(--text);
+      font-size: 1.12rem;
+      text-decoration: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s, background 0.2s, color 0.2s;
+    }
+
+    .social-icons a:hover {
+      transform: scale(1.08);
+      background: var(--accent-soft);
+      color: var(--accent);
     }
 
     /* Player */
     .player {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 16px;
       padding: 24px;
-      margin-bottom: 4px;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow);
     }
 
     .now-playing {
@@ -76,17 +121,17 @@
     }
 
     .now-playing-label {
-      font-size: 0.6875rem;
+      font-size: 0.72rem;
       font-weight: 500;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      color: var(--text-dimmer);
+      color: var(--accent);
       margin-bottom: 6px;
     }
 
     .now-playing-title {
-      font-size: 0.9375rem;
-      font-weight: 400;
+      font-size: 1rem;
+      font-weight: 500;
       color: var(--text);
       white-space: nowrap;
       overflow: hidden;
@@ -142,9 +187,9 @@
 
     .progress-bar-bg {
       width: 100%;
-      height: 2px;
+      height: 4px;
       background: var(--progress-bg);
-      border-radius: 2px;
+      border-radius: 999px;
       cursor: pointer;
       position: relative;
       margin-bottom: 8px;
@@ -153,7 +198,7 @@
     .progress-bar-fill {
       height: 100%;
       background: var(--progress-fill);
-      border-radius: 2px;
+      border-radius: 999px;
       width: 0%;
       pointer-events: none;
       transition: width 0.1s linear;
@@ -171,9 +216,9 @@
     .time-row {
       display: flex;
       justify-content: space-between;
-      font-size: 0.6875rem;
+      font-size: 0.74rem;
       color: var(--text-dim);
-      letter-spacing: 0.04em;
+      letter-spacing: 0.02em;
       font-variant-numeric: tabular-nums;
     }
 
@@ -182,13 +227,13 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 32px;
+      gap: 28px;
     }
 
     .ctrl-btn {
       background: none;
       border: none;
-      color: var(--text-dim);
+      color: #7a7a7a;
       cursor: pointer;
       padding: 4px;
       display: flex;
@@ -199,21 +244,24 @@
     }
 
     .ctrl-btn:hover {
-      color: var(--accent);
+      color: var(--text);
     }
 
     .ctrl-btn.play {
-      color: var(--text);
-      width: 40px;
-      height: 40px;
-      border: 1px solid var(--border);
+      color: white;
+      width: 48px;
+      height: 48px;
+      border: none;
       border-radius: 50%;
-      transition: border-color 0.15s, color 0.15s;
+      background: linear-gradient(135deg, var(--accent), rgba(103, 156, 139, 0.85));
+      box-shadow: 0 6px 16px rgba(103, 156, 139, 0.32);
+      transition: transform 0.15s, box-shadow 0.15s;
     }
 
     .ctrl-btn.play:hover {
-      border-color: var(--accent);
-      color: var(--accent);
+      transform: scale(1.03);
+      box-shadow: 0 9px 22px rgba(103, 156, 139, 0.4);
+      color: white;
     }
 
     .ctrl-btn svg {
@@ -223,18 +271,20 @@
     /* Track list */
     .tracklist {
       border: 1px solid var(--border);
-      border-radius: 4px;
+      border-radius: 14px;
       overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
 
     .track-item {
       display: flex;
       align-items: center;
-      padding: 14px 20px;
+      padding: 14px 16px;
       cursor: pointer;
       border-bottom: 1px solid var(--border);
-      transition: background 0.1s;
-      gap: 16px;
+      transition: transform 0.15s, background 0.15s;
+      gap: 14px;
+      background: var(--surface);
     }
 
     .track-item:last-child {
@@ -243,10 +293,11 @@
 
     .track-item:hover {
       background: var(--surface-hover);
+      transform: translateY(-1px);
     }
 
     .track-item.active {
-      background: var(--surface);
+      background: var(--accent-soft);
     }
 
     .track-num {
@@ -263,9 +314,9 @@
 
     .track-name {
       flex: 1;
-      font-size: 0.875rem;
+      font-size: 0.9rem;
       color: var(--text-dim);
-      font-weight: 400;
+      font-weight: 500;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -276,7 +327,7 @@
     }
 
     .track-duration {
-      font-size: 0.6875rem;
+      font-size: 0.72rem;
       color: var(--text-dimmer);
       font-variant-numeric: tabular-nums;
       letter-spacing: 0.02em;
@@ -286,11 +337,68 @@
       color: var(--text-dim);
     }
 
+    .track-download {
+      width: 30px;
+      height: 30px;
+      border: none;
+      background: transparent;
+      color: var(--text-dimmer);
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+
+    .track-download:hover {
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .bulk-actions {
+      margin-top: 14px;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .zip-btn {
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent), rgba(103, 156, 139, 0.85));
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 11px 18px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 6px 16px rgba(103, 156, 139, 0.32);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .zip-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 22px rgba(103, 156, 139, 0.4);
+    }
+
+    .zip-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      transform: none;
+      box-shadow: none;
+    }
+
     /* Loading state */
     .loading {
       text-align: center;
       padding: 40px 20px;
-      color: var(--text-dimmer);
+      color: var(--text-dim);
       font-size: 0.8125rem;
       letter-spacing: 0.06em;
       text-transform: uppercase;
@@ -299,7 +407,7 @@
     .error {
       text-align: center;
       padding: 40px 20px;
-      color: var(--text-dimmer);
+      color: #c0564f;
       font-size: 0.8125rem;
     }
 
@@ -310,16 +418,17 @@
     }
 
     .footer a {
-      font-size: 0.75rem;
-      color: var(--text-dimmer);
+      font-size: 0.78rem;
+      color: var(--text-dim);
       text-decoration: none;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
       transition: color 0.15s;
+      font-weight: 500;
     }
 
     .footer a:hover {
-      color: var(--text-dim);
+      color: var(--accent);
     }
 
     /* Playing indicator */
@@ -340,7 +449,7 @@
 
     .playing-dots span {
       width: 2px;
-      background: var(--text-dim);
+      background: var(--accent);
       border-radius: 1px;
       animation: bounce 1.2s ease infinite;
     }
@@ -353,13 +462,46 @@
       0%, 100% { transform: scaleY(0.6); }
       50% { transform: scaleY(1); }
     }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        max-width: 100%;
+      }
+
+      .player {
+        padding: 18px;
+      }
+
+      .track-item {
+        padding: 13px 12px;
+      }
+
+      .profile-pic {
+        width: 104px;
+        height: 104px;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <header class="header">
+      <img src="https://gravatar.com/avatar/52f4160bb4d0dbba6ee65ba1be0ffa2e1bbc46971e5cbfb4e9fc62a3a29b7614?v=1774738651000&size=256&d=initials" alt="Doug McArthur" class="profile-pic" />
       <h1>Doug McArthur</h1>
-      <p>2026 Album — Demos</p>
+      <p>Winnipeg Singer-Songwriter</p>
+      <div class="social-icons">
+        <a href="https://instagram.com/dougmcarthur" title="Instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://open.spotify.com/artist/4E4haw1H8JcjoW0LvXpGSD" title="Spotify" aria-label="Spotify"><i class="fab fa-spotify"></i></a>
+        <a href="https://www.youtube.com/@DougMcArthurMusic" title="YouTube" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="https://www.facebook.com/dougmcarthurmusic" title="Facebook" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+        <a href="https://www.tiktok.com/@DougMcArthurMusic" title="TikTok" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+        <a href="https://soundcloud.com/dougmcarthur" title="SoundCloud" aria-label="SoundCloud"><i class="fab fa-soundcloud"></i></a>
+      </div>
     </header>
 
     <div class="player">
@@ -404,6 +546,13 @@
       <div class="loading">Loading tracks…</div>
     </div>
 
+    <div class="bulk-actions">
+      <button class="zip-btn" id="btn-download-all" type="button" disabled>
+        <i class="fa-solid fa-file-zipper" aria-hidden="true"></i>
+        Download All ZIP
+      </button>
+    </div>
+
     <footer class="footer">
       <a href="https://links.dougmcarthur.net">dougmcarthur.net</a>
     </footer>
@@ -411,9 +560,11 @@
 
   <audio id="audio" preload="none"></audio>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script>
     const ALBUM_BASE = "https://dougmcarthur.net/2026-album/";
     const TRACKS_API = "/api/tracks";
+    const DOWNLOAD_API = "/api/download";
 
     const audio = document.getElementById("audio");
     const tracklistEl = document.getElementById("tracklist");
@@ -427,6 +578,7 @@
     const iconPlay = document.getElementById("icon-play");
     const iconPause = document.getElementById("icon-pause");
     const progressBarBg = document.getElementById("progress-bar-bg");
+    const btnDownloadAll = document.getElementById("btn-download-all");
 
     let tracks = [];
     let currentIndex = -1;
@@ -485,10 +637,75 @@
           <span class="track-num">${i + 1}</span>
           <span class="track-name">${track.title}</span>
           <span class="track-duration" id="dur-${i}">${durations[i] ? formatTime(durations[i]) : ""}</span>
+          <button class="track-download" type="button" data-file="${encodeURIComponent(track.file)}" aria-label="Download ${track.title}" title="Download track">
+            <i class="fa-solid fa-download"></i>
+          </button>
         `;
         item.addEventListener("click", () => loadTrack(i, true));
+
+        const dlBtn = item.querySelector(".track-download");
+        dlBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          const file = decodeURIComponent(dlBtn.dataset.file);
+          downloadSingleTrack(file);
+        });
+
         tracklistEl.appendChild(item);
       });
+    }
+
+    function downloadUrlForFile(file) {
+      return `${DOWNLOAD_API}?file=${encodeURIComponent(file)}`;
+    }
+
+    function triggerBrowserDownload(url, fileName) {
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    function downloadSingleTrack(file) {
+      triggerBrowserDownload(downloadUrlForFile(file), file);
+    }
+
+    async function downloadAllAsZip() {
+      if (!tracks.length || btnDownloadAll.disabled) return;
+      if (typeof window.JSZip === "undefined") {
+        alert("ZIP library failed to load. Try refreshing and retry.");
+        return;
+      }
+
+      btnDownloadAll.disabled = true;
+      const originalLabel = btnDownloadAll.innerHTML;
+
+      try {
+        const zip = new window.JSZip();
+
+        for (let i = 0; i < tracks.length; i++) {
+          const track = tracks[i];
+          btnDownloadAll.innerHTML = `<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Zipping ${i + 1}/${tracks.length}`;
+          const res = await fetch(downloadUrlForFile(track.file));
+          if (!res.ok) {
+            throw new Error(`Failed to download ${track.file}`);
+          }
+          const blob = await res.blob();
+          zip.file(track.file, blob);
+        }
+
+        btnDownloadAll.innerHTML = `<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Finalizing ZIP`;
+        const zipBlob = await zip.generateAsync({ type: "blob" });
+        const zipUrl = URL.createObjectURL(zipBlob);
+        triggerBrowserDownload(zipUrl, "doug-mcarthur-2026-demos.zip");
+        setTimeout(() => URL.revokeObjectURL(zipUrl), 1000);
+      } catch (err) {
+        alert("Could not build ZIP. Please try again.");
+      } finally {
+        btnDownloadAll.disabled = false;
+        btnDownloadAll.innerHTML = originalLabel;
+      }
     }
 
     function updateActiveTrack() {
@@ -576,6 +793,7 @@
     btnNext.addEventListener("click", () => {
       if (currentIndex < tracks.length - 1) loadTrack(currentIndex + 1, !audio.paused);
     });
+    btnDownloadAll.addEventListener("click", downloadAllAsZip);
 
     async function loadTracks() {
       try {
@@ -606,8 +824,10 @@
           });
 
         renderTracklist();
+        btnDownloadAll.disabled = tracks.length === 0;
       } catch (err) {
         tracklistEl.innerHTML = `<div class="error">Couldn't load tracks. <a href="${ALBUM_BASE}" style="color:inherit;text-decoration:underline">Browse directly →</a></div>`;
+        btnDownloadAll.disabled = true;
       }
     }
 
