@@ -644,6 +644,7 @@
     const artworkCache = new Map();
     let artworkRequestToken = 0;
     let lastArtworkFile = "";
+    let initialArtworkRetryDone = false;
 
     function formatTime(sec) {
       if (isNaN(sec)) return "0:00";
@@ -711,14 +712,14 @@
       }
     }
 
-    function readArtworkFromBlob(blob) {
+    function readArtworkFromSource(source) {
       return new Promise((resolve) => {
         if (!window.jsmediatags) {
           resolve(null);
           return;
         }
 
-        window.jsmediatags.read(blob, {
+        window.jsmediatags.read(source, {
           onSuccess: (tag) => {
             const picture = tag?.tags?.picture;
             if (!picture || !picture.data || picture.data.length === 0) {
@@ -737,6 +738,14 @@
       });
     }
 
+    function readArtworkFromBlob(blob) {
+      return readArtworkFromSource(blob);
+    }
+
+    function readArtworkFromUrl(url) {
+      return readArtworkFromSource(url);
+    }
+
     async function getArtworkForTrack(track) {
       if (artworkCache.has(track.file)) {
         return artworkCache.get(track.file);
@@ -750,7 +759,10 @@
         }
 
         const blob = await res.blob();
-        const artworkUrl = await readArtworkFromBlob(blob);
+        let artworkUrl = await readArtworkFromBlob(blob);
+        if (!artworkUrl) {
+          artworkUrl = await readArtworkFromUrl(streamUrlForFile(track.file));
+        }
         artworkCache.set(track.file, artworkUrl || null);
         return artworkUrl || null;
       } catch {
@@ -908,6 +920,15 @@
       if (forceArtworkUpdate || lastArtworkFile !== track.file) {
         lastArtworkFile = track.file;
         void updateNowPlayingArtwork(track);
+
+        if (!initialArtworkRetryDone && nextIndex === 0) {
+          setTimeout(() => {
+            if (!nowPlayingMedia.classList.contains("visible")) {
+              initialArtworkRetryDone = true;
+              void updateNowPlayingArtwork(track);
+            }
+          }, 900);
+        }
       }
 
       updatePlayIcon();
