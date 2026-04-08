@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Doug McArthur — 2026 Album Demos</title>
+  <title>Doug McArthur — B-Sides</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -533,7 +533,7 @@
         <img src="https://gravatar.com/avatar/52f4160bb4d0dbba6ee65ba1be0ffa2e1bbc46971e5cbfb4e9fc62a3a29b7614?v=1774738651000&size=256&d=initials" alt="Doug McArthur" class="profile-pic" />
         <h1>Doug McArthur</h1>
         <p class="subtitle">Winnipeg Singer-Songwriter</p>
-        <p class="sidebar-blurb">This page is for sharing private demos from the upcoming 2026 record. You can stream each track, download singles, or export the full collection for offline review.</p>
+        <p class="sidebar-blurb">This page is for sharing B-sides and unreleased tracks. You can stream each track, download singles, or export the full collection for offline review.</p>
 
         <div class="social-icons">
           <a href="https://instagram.com/dougmcarthur" title="Instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
@@ -546,8 +546,8 @@
       </aside>
 
       <main class="main-content">
-        <h2 class="section-heading">2026 Album Demos</h2>
-        <p class="section-description">Stream preview tracks below, download single songs, or grab the full collection.</p>
+        <h2 class="section-heading">B-Sides</h2>
+        <p class="section-description">Stream B-sides below, download single songs, or grab the full collection.</p>
 
         <div class="player">
           <div class="player-layout">
@@ -610,7 +610,7 @@
 
     <footer class="footer">
       <a href="https://links.dougmcarthur.net">dougmcarthur.net</a>
-      <div><a href="/b-sides.html">B-Sides Player</a></div>
+      <div><a href="/">Back to Main Demos</a></div>
       <div>© 2026 Doug McArthur Music</div>
     </footer>
   </div>
@@ -618,11 +618,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/amplitudejs@5.3.2/dist/amplitude.min.js"></script>
   <script>
-    const ALBUM_BASE = "https://dougmcarthur.net/2026-album/";
+    const ALBUM_BASE = "https://dougmcarthur.net/mp3/b-sides/";
     const COVER_ART_URL = `${ALBUM_BASE}folder.jpg`;
-    const TRACKS_API = "/api/tracks";
-    const DOWNLOAD_API = "/api/download";
-    const STREAM_API = "/api/stream";
+    const TRACKS_API = "/api/bsides/tracks";
+    const DOWNLOAD_API = "/api/bsides/download";
+    const STREAM_API = "/api/bsides/stream";
 
     const tracklistEl = document.getElementById("tracklist");
     const nowPlayingTitle = document.getElementById("now-playing-title");
@@ -851,7 +851,7 @@
       const songs = tracks.map((track) => ({
         name: track.title,
         artist: track.artist || "Doug McArthur",
-        album: "2026 Album Demos",
+        album: "B-Sides",
         url: streamUrlForFile(track.file),
       }));
 
