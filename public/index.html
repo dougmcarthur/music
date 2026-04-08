@@ -614,9 +614,8 @@
     </footer>
   </div>
 
-  <audio id="audio" preload="none"></audio>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/amplitudejs@5.3.2/dist/amplitude.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jsmediatags@3.9.7/dist/jsmediatags.min.js"></script>
   <script>
     const ALBUM_BASE = "https://dougmcarthur.net/2026-album/";
@@ -624,7 +623,6 @@
     const DOWNLOAD_API = "/api/download";
     const STREAM_API = "/api/stream";
 
-    const audio = document.getElementById("audio");
     const tracklistEl = document.getElementById("tracklist");
     const nowPlayingTitle = document.getElementById("now-playing-title");
     const nowPlayingMedia = document.getElementById("now-playing-media");
@@ -645,7 +643,7 @@
     let durations = {};
     const artworkCache = new Map();
     let artworkRequestToken = 0;
-    let hasUserInitiatedPlayback = false;
+    let lastArtworkFile = "";
 
     function formatTime(sec) {
       if (isNaN(sec)) return "0:00";
@@ -812,36 +810,88 @@
       }
     }
 
-    async function ensurePlaybackStarted() {
-      const tryPlay = async () => {
-        try {
-          await audio.play();
-          return true;
-        } catch {
-          return false;
-        }
-      };
+    function updatePlayIcon() {
+      const playing = Amplitude.getPlayerState() === "playing";
+      iconPlay.style.display = playing ? "none" : "block";
+      iconPause.style.display = playing ? "block" : "none";
+    }
 
-      if (await tryPlay()) return;
+    function updateActiveTrackStyling() {
+      const playing = Amplitude.getPlayerState() === "playing";
+      document.querySelectorAll(".track-item").forEach((el, i) => {
+        const isActive = i === currentIndex;
+        el.classList.toggle("active", isActive);
+        el.classList.toggle("is-playing", isActive && playing);
+      });
+    }
 
-      const waitForAndRetry = (eventName) =>
-        new Promise((resolve) => {
-          const timeoutId = setTimeout(() => {
-            audio.removeEventListener(eventName, onReady);
-            resolve(false);
-          }, 1500);
+    function syncProgressAndTime() {
+      const pct = Number(Amplitude.getSongPlayedPercentage() || 0);
+      progressFill.style.width = `${pct}%`;
+      timeCurrent.textContent = formatTime(Number(Amplitude.getSongPlayedSeconds() || 0));
+      const duration = Number(Amplitude.getSongDuration() || 0);
+      timeTotal.textContent = formatTime(duration);
 
-          const onReady = async () => {
-            clearTimeout(timeoutId);
-            resolve(await tryPlay());
-          };
+      if (currentIndex >= 0 && duration > 0) {
+        durations[currentIndex] = duration;
+        const durEl = document.getElementById(`dur-${currentIndex}`);
+        if (durEl) durEl.textContent = formatTime(duration);
+      }
+    }
 
-          audio.addEventListener(eventName, onReady, { once: true });
-        });
+    function syncNowPlayingFromAmplitude(forceArtworkUpdate = false) {
+      const nextIndex = Number(Amplitude.getActiveIndex());
+      if (!Number.isInteger(nextIndex) || nextIndex < 0 || nextIndex >= tracks.length) {
+        return;
+      }
 
-      if (await waitForAndRetry("loadedmetadata")) return;
-      if (await waitForAndRetry("canplay")) return;
-      await waitForAndRetry("canplaythrough");
+      currentIndex = nextIndex;
+      const track = tracks[currentIndex];
+      nowPlayingTitle.textContent = track.displayTitle;
+
+      if (forceArtworkUpdate || lastArtworkFile !== track.file) {
+        lastArtworkFile = track.file;
+        void updateNowPlayingArtwork(track);
+      }
+
+      updatePlayIcon();
+      updateActiveTrackStyling();
+      syncProgressAndTime();
+    }
+
+    function initAmplitudePlayer() {
+      const songs = tracks.map((track) => ({
+        name: track.title,
+        artist: track.artist || "Doug McArthur",
+        album: "2026 Album Demos",
+        url: streamUrlForFile(track.file),
+      }));
+
+      Amplitude.init({
+        songs,
+        start_song: 0,
+        continue_next: true,
+        callbacks: {
+          initialized: () => {
+            Amplitude.setDelay(0);
+            Amplitude.pause();
+            const ampAudio = Amplitude.getAudio();
+            if (ampAudio) {
+              ampAudio.preload = "metadata";
+              ampAudio.load();
+            }
+            syncNowPlayingFromAmplitude(true);
+          },
+          song_change: () => syncNowPlayingFromAmplitude(true),
+          next: () => syncNowPlayingFromAmplitude(true),
+          prev: () => syncNowPlayingFromAmplitude(true),
+          play: () => syncNowPlayingFromAmplitude(false),
+          pause: () => syncNowPlayingFromAmplitude(false),
+          timeupdate: () => syncProgressAndTime(),
+          loadedmetadata: () => syncProgressAndTime(),
+          ended: () => syncNowPlayingFromAmplitude(true),
+        },
+      });
     }
 
     function renderTracklist() {
@@ -863,8 +913,8 @@
         `;
 
         item.addEventListener("click", () => {
-          hasUserInitiatedPlayback = true;
-          loadTrack(i, true);
+          Amplitude.playSongAtIndex(i);
+          syncNowPlayingFromAmplitude(true);
         });
 
         const dlBtn = item.querySelector(".track-download");
@@ -878,116 +928,30 @@
       });
     }
 
-    function updateActiveTrack() {
-      document.querySelectorAll(".track-item").forEach((el, i) => {
-        el.classList.toggle("active", i === currentIndex);
-        el.classList.remove("is-playing");
-      });
-
-      if (currentIndex >= 0 && !audio.paused) {
-        const activeEl = document.querySelector(`.track-item[data-index="${currentIndex}"]`);
-        if (activeEl) activeEl.classList.add("is-playing");
-      }
-    }
-
-    function loadTrack(index, autoplay = false) {
-      if (index < 0 || index >= tracks.length) return;
-
-      currentIndex = index;
-      const track = tracks[index];
-      audio.autoplay = autoplay;
-      audio.src = streamUrlForFile(track.file);
-      audio.load();
-      nowPlayingTitle.textContent = track.displayTitle;
-      updateNowPlayingArtwork(track);
-
-      progressFill.style.width = "0%";
-      timeCurrent.textContent = "0:00";
-      timeTotal.textContent = durations[index] ? formatTime(durations[index]) : "0:00";
-      renderTracklist();
-
-      if (autoplay && hasUserInitiatedPlayback) {
-        void ensurePlaybackStarted();
-      }
-    }
-
     function togglePlay() {
-      if (currentIndex < 0 && tracks.length > 0) {
-        hasUserInitiatedPlayback = true;
-        loadTrack(0, true);
-        return;
-      }
-
-      if (audio.paused) {
-        hasUserInitiatedPlayback = true;
-        void ensurePlaybackStarted();
+      if (Amplitude.getPlayerState() === "playing") {
+        Amplitude.pause();
       } else {
-        audio.pause();
+        Amplitude.play();
       }
+      syncNowPlayingFromAmplitude(false);
     }
-
-    function playNextTrack({ autoplay = true, wrap = false } = {}) {
-      if (!tracks.length) return false;
-
-      const nextIndex = currentIndex + 1;
-      if (nextIndex < tracks.length) {
-        loadTrack(nextIndex, autoplay);
-        return true;
-      }
-
-      if (wrap) {
-        loadTrack(0, autoplay);
-        return true;
-      }
-
-      return false;
-    }
-
-    function updatePlayIcon() {
-      const playing = !audio.paused;
-      iconPlay.style.display = playing ? "none" : "block";
-      iconPause.style.display = playing ? "block" : "none";
-      updateActiveTrack();
-    }
-
-    audio.addEventListener("play", updatePlayIcon);
-    audio.addEventListener("pause", updatePlayIcon);
-    audio.addEventListener("ended", () => {
-      const advanced = playNextTrack({ autoplay: true, wrap: false });
-      if (!advanced) {
-        updatePlayIcon();
-      }
-    });
-
-    audio.addEventListener("timeupdate", () => {
-      if (!audio.duration) return;
-      const pct = (audio.currentTime / audio.duration) * 100;
-      progressFill.style.width = `${pct}%`;
-      timeCurrent.textContent = formatTime(audio.currentTime);
-    });
-
-    audio.addEventListener("loadedmetadata", () => {
-      timeTotal.textContent = formatTime(audio.duration);
-      if (currentIndex >= 0) {
-        durations[currentIndex] = audio.duration;
-        const durEl = document.getElementById(`dur-${currentIndex}`);
-        if (durEl) durEl.textContent = formatTime(audio.duration);
-      }
-    });
 
     progressBarBg.addEventListener("click", (e) => {
-      if (!audio.duration) return;
       const rect = progressBarBg.getBoundingClientRect();
       const pct = (e.clientX - rect.left) / rect.width;
-      audio.currentTime = pct * audio.duration;
+      Amplitude.setSongPlayedPercentage(Math.max(0, Math.min(100, pct * 100)));
+      syncProgressAndTime();
     });
 
     btnPlay.addEventListener("click", togglePlay);
     btnPrev.addEventListener("click", () => {
-      if (currentIndex > 0) loadTrack(currentIndex - 1, !audio.paused);
+      Amplitude.prev();
+      syncNowPlayingFromAmplitude(true);
     });
     btnNext.addEventListener("click", () => {
-      playNextTrack({ autoplay: !audio.paused, wrap: false });
+      Amplitude.next();
+      syncNowPlayingFromAmplitude(true);
     });
     btnDownloadAll.addEventListener("click", downloadAllAsZip);
 
@@ -1022,7 +986,7 @@
 
         renderTracklist();
         if (tracks.length > 0) {
-          loadTrack(0, false);
+          initAmplitudePlayer();
         }
         btnDownloadAll.disabled = tracks.length === 0;
       } catch {
