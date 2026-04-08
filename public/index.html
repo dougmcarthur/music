@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Doug McArthur — 2026 Album Demos</title>
+  <title>Doug McArthur — 2026 Demos and B-Sides</title>
   <meta property="og:image" content="/2026-album.jpg" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -126,6 +126,10 @@
 
     .main-content {
       min-width: 0;
+    }
+
+    .collection {
+      margin-bottom: 30px;
     }
 
     .section-heading {
@@ -444,41 +448,6 @@
       color: var(--accent);
     }
 
-    .footer-nav-card {
-      display: inline-block;
-      margin: 12px auto 10px;
-      text-decoration: none;
-      color: inherit;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
-      transition: transform 0.15s, box-shadow 0.15s;
-      max-width: 280px;
-    }
-
-    .footer-nav-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
-    }
-
-    .footer-nav-card img {
-      display: block;
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      object-fit: cover;
-    }
-
-    .footer-nav-card-label {
-      display: block;
-      background: rgba(255, 255, 255, 0.95);
-      color: var(--text);
-      font-size: 0.74rem;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 10px 12px;
-    }
-
     .playing-dots {
       display: none;
       gap: 3px;
@@ -569,7 +538,7 @@
         <img src="https://gravatar.com/avatar/52f4160bb4d0dbba6ee65ba1be0ffa2e1bbc46971e5cbfb4e9fc62a3a29b7614?v=1774738651000&size=256&d=initials" alt="Doug McArthur" class="profile-pic" />
         <h1>Doug McArthur</h1>
         <p class="subtitle">Winnipeg Singer-Songwriter</p>
-        <p class="sidebar-blurb">This page is for sharing private demos from the upcoming 2026 record. You can stream each track, download singles, or export the full collection for offline review.</p>
+        <p class="sidebar-blurb">This page is for sharing private demos and B-sides. You can stream each track, download singles, or export each collection for offline review.</p>
 
         <div class="social-icons">
           <a href="https://instagram.com/dougmcarthur" title="Instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
@@ -582,105 +551,142 @@
       </aside>
 
       <main class="main-content">
-        <h2 class="section-heading">2026 Album Demos</h2>
-        <p class="section-description">Stream preview tracks below, download single songs, or grab the full collection.</p>
+        <section class="collection" aria-labelledby="main-demos-heading">
+          <h2 class="section-heading" id="main-demos-heading">2026 Album Demos</h2>
+          <p class="section-description">Stream preview tracks below, download single songs, or grab the full collection.</p>
 
-        <div class="player">
-          <div class="player-layout">
-            <div class="now-playing-media" id="now-playing-media">
-              <img id="now-playing-art" alt="Current track artwork" />
-            </div>
-
-            <div class="player-main">
-              <div class="now-playing">
-                <div class="now-playing-label">Now Playing</div>
-                <div class="now-playing-title" id="now-playing-title">—</div>
+          <div class="player">
+            <div class="player-layout">
+              <div class="now-playing-media" id="main-now-playing-media">
+                <img id="main-now-playing-art" alt="Current track artwork" />
               </div>
 
-              <div class="progress-wrap">
-                <div class="progress-bar-bg" id="progress-bar-bg">
-                  <div class="progress-bar-fill" id="progress-fill"></div>
+              <div class="player-main">
+                <div class="now-playing">
+                  <div class="now-playing-label">Now Playing</div>
+                  <div class="now-playing-title" id="main-now-playing-title">-</div>
                 </div>
-                <div class="time-row">
-                  <span id="time-current">0:00</span>
-                  <span id="time-total">0:00</span>
-                </div>
-              </div>
 
-              <div class="controls">
-                <button class="ctrl-btn" id="btn-prev" aria-label="Previous track">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/>
-                  </svg>
-                </button>
-                <button class="ctrl-btn play" id="btn-play" aria-label="Play / pause">
-                  <svg id="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M8 5v14l11-7z"/>
-                  </svg>
-                  <svg id="icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none">
-                    <path d="M6 19h4V5H6zm8-14v14h4V5z"/>
-                  </svg>
-                </button>
-                <button class="ctrl-btn" id="btn-next" aria-label="Next track">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M6 18l8.5-6L6 6v12zm2-8.14 5.02 2.14L8 14.14V9.86zM16 6h2v12h-2z"/>
-                  </svg>
-                </button>
+                <div class="progress-wrap">
+                  <div class="progress-bar-bg" id="main-progress-bar-bg">
+                    <div class="progress-bar-fill" id="main-progress-fill"></div>
+                  </div>
+                  <div class="time-row">
+                    <span id="main-time-current">0:00</span>
+                    <span id="main-time-total">0:00</span>
+                  </div>
+                </div>
+
+                <div class="controls">
+                  <button class="ctrl-btn" id="main-btn-prev" aria-label="Previous track">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/>
+                    </svg>
+                  </button>
+                  <button class="ctrl-btn play" id="main-btn-play" aria-label="Play / pause">
+                    <svg id="main-icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    <svg id="main-icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+                      <path d="M6 19h4V5H6zm8-14v14h4V5z"/>
+                    </svg>
+                  </button>
+                  <button class="ctrl-btn" id="main-btn-next" aria-label="Next track">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 18l8.5-6L6 6v12zm2-8.14 5.02 2.14L8 14.14V9.86zM16 6h2v12h-2z"/>
+                    </svg>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="tracklist" id="tracklist">
-          <div class="loading">Loading tracks…</div>
-        </div>
+          <div class="tracklist" id="main-tracklist">
+            <div class="loading">Loading tracks...</div>
+          </div>
 
-        <div class="bulk-actions">
-          <button class="zip-btn" id="btn-download-all" type="button" disabled>
-            <i class="fa-solid fa-download" aria-hidden="true"></i>
-            Download All
-          </button>
-        </div>
+          <div class="bulk-actions">
+            <button class="zip-btn" id="main-btn-download-all" type="button" disabled>
+              <i class="fa-solid fa-download" aria-hidden="true"></i>
+              Download All
+            </button>
+          </div>
+        </section>
+
+        <section class="collection" aria-labelledby="bsides-heading">
+          <h2 class="section-heading" id="bsides-heading">B-Sides</h2>
+          <p class="section-description">Stream B-sides below, download single songs, or grab the full collection.</p>
+
+          <div class="player">
+            <div class="player-layout">
+              <div class="now-playing-media" id="bsides-now-playing-media">
+                <img id="bsides-now-playing-art" alt="Current track artwork" />
+              </div>
+
+              <div class="player-main">
+                <div class="now-playing">
+                  <div class="now-playing-label">Now Playing</div>
+                  <div class="now-playing-title" id="bsides-now-playing-title">-</div>
+                </div>
+
+                <div class="progress-wrap">
+                  <div class="progress-bar-bg" id="bsides-progress-bar-bg">
+                    <div class="progress-bar-fill" id="bsides-progress-fill"></div>
+                  </div>
+                  <div class="time-row">
+                    <span id="bsides-time-current">0:00</span>
+                    <span id="bsides-time-total">0:00</span>
+                  </div>
+                </div>
+
+                <div class="controls">
+                  <button class="ctrl-btn" id="bsides-btn-prev" aria-label="Previous track">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/>
+                    </svg>
+                  </button>
+                  <button class="ctrl-btn play" id="bsides-btn-play" aria-label="Play / pause">
+                    <svg id="bsides-icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                    <svg id="bsides-icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+                      <path d="M6 19h4V5H6zm8-14v14h4V5z"/>
+                    </svg>
+                  </button>
+                  <button class="ctrl-btn" id="bsides-btn-next" aria-label="Next track">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M6 18l8.5-6L6 6v12zm2-8.14 5.02 2.14L8 14.14V9.86zM16 6h2v12h-2z"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tracklist" id="bsides-tracklist">
+            <div class="loading">Loading tracks...</div>
+          </div>
+
+          <div class="bulk-actions">
+            <button class="zip-btn" id="bsides-btn-download-all" type="button" disabled>
+              <i class="fa-solid fa-download" aria-hidden="true"></i>
+              Download All
+            </button>
+          </div>
+        </section>
       </main>
     </div>
 
     <footer class="footer">
       <a href="https://links.dougmcarthur.net">dougmcarthur.net</a>
-      <a class="footer-nav-card" href="/b-sides.html" aria-label="Open B-Sides player">
-        <img src="/b-sides.jpg" alt="B-Sides cover art" />
-        <span class="footer-nav-card-label">Open B-Sides Player</span>
-      </a>
-      <div>© 2026 Doug McArthur Music</div>
+      <div>&copy; 2026 Doug McArthur Music</div>
     </footer>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/amplitudejs@5.3.2/dist/amplitude.min.js"></script>
   <script>
-    const ALBUM_BASE = "https://dougmcarthur.net/2026-album/";
-    const COVER_ART_URL = "/2026-album.jpg";
-    const TRACKS_API = "/api/tracks";
-    const DOWNLOAD_API = "/api/download";
-    const STREAM_API = "/api/stream";
-
-    const tracklistEl = document.getElementById("tracklist");
-    const nowPlayingTitle = document.getElementById("now-playing-title");
-    const nowPlayingMedia = document.getElementById("now-playing-media");
-    const nowPlayingArt = document.getElementById("now-playing-art");
-    const progressFill = document.getElementById("progress-fill");
-    const timeCurrent = document.getElementById("time-current");
-    const timeTotal = document.getElementById("time-total");
-    const btnPlay = document.getElementById("btn-play");
-    const btnPrev = document.getElementById("btn-prev");
-    const btnNext = document.getElementById("btn-next");
-    const iconPlay = document.getElementById("icon-play");
-    const iconPause = document.getElementById("icon-pause");
-    const progressBarBg = document.getElementById("progress-bar-bg");
-    const btnDownloadAll = document.getElementById("btn-download-all");
-
-    let tracks = [];
-    let currentIndex = -1;
-    let durations = {};
+    const MAIN_BASE = "https://dougmcarthur.net/2026-album/";
+    const BSIDES_BASE = "https://dougmcarthur.net/mp3/b-sides/";
 
     function formatTime(sec) {
       if (isNaN(sec)) return "0:00";
@@ -721,14 +727,6 @@
       };
     }
 
-    function downloadUrlForFile(file) {
-      return `${DOWNLOAD_API}?file=${encodeURIComponent(file)}`;
-    }
-
-    function streamUrlForFile(file) {
-      return `${STREAM_API}?file=${encodeURIComponent(file)}`;
-    }
-
     function triggerBrowserDownload(url, fileName) {
       const link = document.createElement("a");
       link.href = url;
@@ -736,16 +734,6 @@
       document.body.appendChild(link);
       link.click();
       link.remove();
-    }
-
-    function setNowPlayingArtwork(url) {
-      if (url) {
-        nowPlayingArt.src = url;
-        nowPlayingMedia.classList.add("visible");
-      } else {
-        nowPlayingArt.removeAttribute("src");
-        nowPlayingMedia.classList.remove("visible");
-      }
     }
 
     function getDurationFromBlob(blob) {
@@ -775,256 +763,391 @@
       });
     }
 
-    async function preloadTrackData() {
-      for (let i = 0; i < tracks.length; i++) {
-        const track = tracks[i];
+    function buildApiUrl(base, collection, file) {
+      const url = new URL(base, window.location.origin);
+      if (collection) {
+        url.searchParams.set("collection", collection);
+      }
+      if (file) {
+        url.searchParams.set("file", file);
+      }
+      return `${url.pathname}${url.search}`;
+    }
 
-        try {
-          const res = await fetch(downloadUrlForFile(track.file), { cache: "force-cache" });
-          if (!res.ok) continue;
+    function initCollectionPlayer(config) {
+      const tracklistEl = document.getElementById(config.ids.tracklist);
+      const nowPlayingTitle = document.getElementById(config.ids.nowPlayingTitle);
+      const nowPlayingMedia = document.getElementById(config.ids.nowPlayingMedia);
+      const nowPlayingArt = document.getElementById(config.ids.nowPlayingArt);
+      const progressFill = document.getElementById(config.ids.progressFill);
+      const timeCurrent = document.getElementById(config.ids.timeCurrent);
+      const timeTotal = document.getElementById(config.ids.timeTotal);
+      const btnPlay = document.getElementById(config.ids.btnPlay);
+      const btnPrev = document.getElementById(config.ids.btnPrev);
+      const btnNext = document.getElementById(config.ids.btnNext);
+      const iconPlay = document.getElementById(config.ids.iconPlay);
+      const iconPause = document.getElementById(config.ids.iconPause);
+      const progressBarBg = document.getElementById(config.ids.progressBarBg);
+      const btnDownloadAll = document.getElementById(config.ids.btnDownloadAll);
 
-          const blob = await res.blob();
+      const audio = new Audio();
+      audio.preload = "metadata";
 
-          const duration = await getDurationFromBlob(blob);
-          if (duration > 0) {
-            durations[i] = duration;
-          }
+      let tracks = [];
+      let currentIndex = -1;
+      const durations = {};
 
-        } catch {
-          // Continue preloading remaining tracks even if one fails.
+      function downloadUrlForFile(file) {
+        return buildApiUrl(config.downloadApi, config.collection, file);
+      }
+
+      function streamUrlForFile(file) {
+        return buildApiUrl(config.streamApi, config.collection, file);
+      }
+
+      function setNowPlayingArtwork(url) {
+        if (url) {
+          nowPlayingArt.src = url;
+          nowPlayingMedia.classList.add("visible");
+        } else {
+          nowPlayingArt.removeAttribute("src");
+          nowPlayingMedia.classList.remove("visible");
         }
       }
-    }
 
-    function downloadSingleTrack(file) {
-      triggerBrowserDownload(downloadUrlForFile(file), file);
-    }
+      function syncProgressAndTime() {
+        const duration = Number(audio.duration || 0);
+        const currentTime = Number(audio.currentTime || 0);
+        const pct = duration > 0 ? (currentTime / duration) * 100 : 0;
+        progressFill.style.width = `${pct}%`;
+        timeCurrent.textContent = formatTime(currentTime);
+        timeTotal.textContent = formatTime(duration);
 
-    async function downloadAllAsZip() {
-      if (!tracks.length || btnDownloadAll.disabled) return;
-      if (typeof window.JSZip === "undefined") {
-        alert("ZIP library failed to load. Try refreshing and retry.");
-        return;
+        if (currentIndex >= 0 && duration > 0) {
+          durations[currentIndex] = duration;
+          const durEl = document.getElementById(`${config.prefix}-dur-${currentIndex}`);
+          if (durEl) {
+            durEl.textContent = formatTime(duration);
+          }
+        }
       }
 
-      btnDownloadAll.disabled = true;
-      const originalLabel = btnDownloadAll.innerHTML;
+      function updatePlayIcon() {
+        const playing = !audio.paused;
+        iconPlay.style.display = playing ? "none" : "block";
+        iconPause.style.display = playing ? "block" : "none";
+      }
 
-      try {
-        const zip = new window.JSZip();
+      function updateActiveTrackStyling() {
+        const playing = !audio.paused;
+        tracklistEl.querySelectorAll(".track-item").forEach((el, i) => {
+          const isActive = i === currentIndex;
+          el.classList.toggle("active", isActive);
+          el.classList.toggle("is-playing", isActive && playing);
+        });
+      }
 
+      function syncNowPlaying() {
+        if (currentIndex < 0 || currentIndex >= tracks.length) {
+          return;
+        }
+
+        const track = tracks[currentIndex];
+        nowPlayingTitle.textContent = track.displayTitle;
+        setNowPlayingArtwork(config.coverArtUrl);
+        updatePlayIcon();
+        updateActiveTrackStyling();
+        syncProgressAndTime();
+      }
+
+      function playTrack(index, autoplay = true) {
+        if (!Number.isInteger(index) || index < 0 || index >= tracks.length) {
+          return;
+        }
+
+        const track = tracks[index];
+        const nextUrl = streamUrlForFile(track.file);
+        const sourceChanged = audio.src !== new URL(nextUrl, window.location.origin).toString();
+
+        currentIndex = index;
+        if (sourceChanged) {
+          audio.src = nextUrl;
+          audio.load();
+        }
+
+        syncNowPlaying();
+
+        if (autoplay) {
+          audio.play().catch(() => {
+            updatePlayIcon();
+            updateActiveTrackStyling();
+          });
+        }
+      }
+
+      function playNext() {
+        if (!tracks.length) return;
+        const nextIndex = currentIndex + 1;
+        if (nextIndex < tracks.length) {
+          playTrack(nextIndex, true);
+        } else {
+          audio.pause();
+          audio.currentTime = 0;
+          syncProgressAndTime();
+        }
+      }
+
+      function playPrev() {
+        if (!tracks.length) return;
+        if (audio.currentTime > 3) {
+          audio.currentTime = 0;
+          syncProgressAndTime();
+          return;
+        }
+        const prevIndex = currentIndex > 0 ? currentIndex - 1 : 0;
+        playTrack(prevIndex, true);
+      }
+
+      function togglePlay() {
+        if (!tracks.length) return;
+
+        if (currentIndex < 0) {
+          playTrack(0, true);
+          return;
+        }
+
+        if (audio.paused) {
+          audio.play().catch(() => {});
+        } else {
+          audio.pause();
+        }
+      }
+
+      function downloadSingleTrack(file) {
+        triggerBrowserDownload(downloadUrlForFile(file), file);
+      }
+
+      async function preloadTrackData() {
         for (let i = 0; i < tracks.length; i++) {
           const track = tracks[i];
-          btnDownloadAll.innerHTML = `<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Zipping ${i + 1}/${tracks.length}`;
-          const res = await fetch(downloadUrlForFile(track.file));
-          if (!res.ok) {
-            throw new Error(`Failed to download ${track.file}`);
+
+          try {
+            const res = await fetch(downloadUrlForFile(track.file), { cache: "force-cache" });
+            if (!res.ok) continue;
+
+            const blob = await res.blob();
+            const duration = await getDurationFromBlob(blob);
+            if (duration > 0) {
+              durations[i] = duration;
+              const durEl = document.getElementById(`${config.prefix}-dur-${i}`);
+              if (durEl) {
+                durEl.textContent = formatTime(duration);
+              }
+            }
+          } catch {
+            // Continue preloading remaining tracks even if one fails.
           }
-          const blob = await res.blob();
-          zip.file(track.file, blob);
+        }
+      }
+
+      async function downloadAllAsZip() {
+        if (!tracks.length || btnDownloadAll.disabled) return;
+        if (typeof window.JSZip === "undefined") {
+          alert("ZIP library failed to load. Try refreshing and retry.");
+          return;
         }
 
-        btnDownloadAll.innerHTML = `<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Finalizing`;
-        const zipBlob = await zip.generateAsync({ type: "blob" });
-        const zipUrl = URL.createObjectURL(zipBlob);
-        triggerBrowserDownload(zipUrl, "doug-mcarthur-2026-demos.zip");
-        setTimeout(() => URL.revokeObjectURL(zipUrl), 1000);
-      } catch {
-        alert("Could not build download package. Please try again.");
-      } finally {
-        btnDownloadAll.disabled = false;
-        btnDownloadAll.innerHTML = originalLabel;
-      }
-    }
+        btnDownloadAll.disabled = true;
+        const originalLabel = btnDownloadAll.innerHTML;
 
-    function updatePlayIcon() {
-      const playing = Amplitude.getPlayerState() === "playing";
-      iconPlay.style.display = playing ? "none" : "block";
-      iconPause.style.display = playing ? "block" : "none";
-    }
+        try {
+          const zip = new window.JSZip();
 
-    function updateActiveTrackStyling() {
-      const playing = Amplitude.getPlayerState() === "playing";
-      document.querySelectorAll(".track-item").forEach((el, i) => {
-        const isActive = i === currentIndex;
-        el.classList.toggle("active", isActive);
-        el.classList.toggle("is-playing", isActive && playing);
-      });
-    }
-
-    function syncProgressAndTime() {
-      const pct = Number(Amplitude.getSongPlayedPercentage() || 0);
-      progressFill.style.width = `${pct}%`;
-      timeCurrent.textContent = formatTime(Number(Amplitude.getSongPlayedSeconds() || 0));
-      const duration = Number(Amplitude.getSongDuration() || 0);
-      timeTotal.textContent = formatTime(duration);
-
-      if (currentIndex >= 0 && duration > 0) {
-        durations[currentIndex] = duration;
-        const durEl = document.getElementById(`dur-${currentIndex}`);
-        if (durEl) durEl.textContent = formatTime(duration);
-      }
-    }
-
-    function syncNowPlayingFromAmplitude(forceArtworkUpdate = false) {
-      const activeIndex = Number(Amplitude.getActiveIndex());
-      const nextIndex = Number.isInteger(activeIndex)
-        ? activeIndex
-        : (currentIndex >= 0 ? currentIndex : 0);
-
-      if (!Number.isInteger(nextIndex) || nextIndex < 0 || nextIndex >= tracks.length) {
-        return;
-      }
-
-      currentIndex = nextIndex;
-      const track = tracks[currentIndex];
-      nowPlayingTitle.textContent = track.displayTitle;
-      setNowPlayingArtwork(COVER_ART_URL);
-
-      updatePlayIcon();
-      updateActiveTrackStyling();
-      syncProgressAndTime();
-    }
-
-    function initAmplitudePlayer() {
-      const songs = tracks.map((track) => ({
-        name: track.title,
-        artist: track.artist || "Doug McArthur",
-        album: "2026 Album Demos",
-        url: streamUrlForFile(track.file),
-      }));
-
-      Amplitude.init({
-        songs,
-        start_song: 0,
-        continue_next: true,
-        callbacks: {
-          initialized: () => {
-            Amplitude.setDelay(0);
-            Amplitude.pause();
-            const ampAudio = Amplitude.getAudio();
-            if (ampAudio) {
-              ampAudio.preload = "metadata";
-              ampAudio.load();
+          for (let i = 0; i < tracks.length; i++) {
+            const track = tracks[i];
+            btnDownloadAll.innerHTML = `<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Zipping ${i + 1}/${tracks.length}`;
+            const res = await fetch(downloadUrlForFile(track.file));
+            if (!res.ok) {
+              throw new Error(`Failed to download ${track.file}`);
             }
-            syncNowPlayingFromAmplitude(true);
-          },
-          song_change: () => syncNowPlayingFromAmplitude(true),
-          next: () => syncNowPlayingFromAmplitude(true),
-          prev: () => syncNowPlayingFromAmplitude(true),
-          play: () => syncNowPlayingFromAmplitude(false),
-          pause: () => syncNowPlayingFromAmplitude(false),
-          timeupdate: () => syncProgressAndTime(),
-          loadedmetadata: () => syncProgressAndTime(),
-          ended: () => syncNowPlayingFromAmplitude(true),
-        },
-      });
-    }
+            const blob = await res.blob();
+            zip.file(track.file, blob);
+          }
 
-    function renderTracklist() {
-      tracklistEl.innerHTML = "";
-      tracks.forEach((track, i) => {
-        const item = document.createElement("div");
-        item.className = "track-item" + (i === currentIndex ? " active" : "");
-        item.dataset.index = i;
-        item.innerHTML = `
-          <div class="playing-dots">
-            <span></span><span></span><span></span>
-          </div>
-          <span class="track-num">${i + 1}</span>
-          <span class="track-name">${track.title}</span>
-          <span class="track-duration" id="dur-${i}">${durations[i] ? formatTime(durations[i]) : ""}</span>
-          <button class="track-download" type="button" data-file="${encodeURIComponent(track.file)}" aria-label="Download ${track.title}" title="Download track">
-            <i class="fa-solid fa-download"></i>
-          </button>
-        `;
-
-        item.addEventListener("click", () => {
-          Amplitude.playSongAtIndex(i);
-          syncNowPlayingFromAmplitude(true);
-        });
-
-        const dlBtn = item.querySelector(".track-download");
-        dlBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          const file = decodeURIComponent(dlBtn.dataset.file);
-          downloadSingleTrack(file);
-        });
-
-        tracklistEl.appendChild(item);
-      });
-    }
-
-    function togglePlay() {
-      if (Amplitude.getPlayerState() === "playing") {
-        Amplitude.pause();
-      } else {
-        Amplitude.play();
-      }
-      syncNowPlayingFromAmplitude(false);
-    }
-
-    progressBarBg.addEventListener("click", (e) => {
-      const rect = progressBarBg.getBoundingClientRect();
-      const pct = (e.clientX - rect.left) / rect.width;
-      Amplitude.setSongPlayedPercentage(Math.max(0, Math.min(100, pct * 100)));
-      syncProgressAndTime();
-    });
-
-    btnPlay.addEventListener("click", togglePlay);
-    btnPrev.addEventListener("click", () => {
-      Amplitude.prev();
-      syncNowPlayingFromAmplitude(true);
-    });
-    btnNext.addEventListener("click", () => {
-      Amplitude.next();
-      syncNowPlayingFromAmplitude(true);
-    });
-    btnDownloadAll.addEventListener("click", downloadAllAsZip);
-
-    async function loadTracks() {
-      try {
-        const res = await fetch(TRACKS_API, { cache: "no-store" });
-        if (!res.ok) throw new Error(`Track API failed (${res.status})`);
-
-        const data = await res.json();
-        if (!Array.isArray(data.tracks) || data.tracks.length === 0) {
-          throw new Error("No tracks found");
+          btnDownloadAll.innerHTML = '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Finalizing';
+          const zipBlob = await zip.generateAsync({ type: "blob" });
+          const zipUrl = URL.createObjectURL(zipBlob);
+          triggerBrowserDownload(zipUrl, config.zipFileName);
+          setTimeout(() => URL.revokeObjectURL(zipUrl), 1000);
+        } catch {
+          alert("Could not build download package. Please try again.");
+        } finally {
+          btnDownloadAll.disabled = false;
+          btnDownloadAll.innerHTML = originalLabel;
         }
+      }
 
-        tracks = data.tracks
-          .map((track) => {
-            const parsed = parseTrackFileName(track.file);
-            return {
-              url: track.url,
-              file: track.file,
-              title: parsed.title,
-              artist: parsed.artist,
-              trackNumber: parsed.trackNumber,
-              displayTitle: parsed.displayTitle,
-            };
-          })
-          .sort((a, b) => {
-            if (a.trackNumber !== null && b.trackNumber !== null) {
-              return a.trackNumber - b.trackNumber;
-            }
-            return a.file.localeCompare(b.file, undefined, { numeric: true });
+      function renderTracklist() {
+        tracklistEl.innerHTML = "";
+
+        tracks.forEach((track, i) => {
+          const item = document.createElement("div");
+          item.className = "track-item" + (i === currentIndex ? " active" : "");
+          item.dataset.index = i;
+          item.innerHTML = `
+            <div class="playing-dots">
+              <span></span><span></span><span></span>
+            </div>
+            <span class="track-num">${i + 1}</span>
+            <span class="track-name">${track.title}</span>
+            <span class="track-duration" id="${config.prefix}-dur-${i}">${durations[i] ? formatTime(durations[i]) : ""}</span>
+            <button class="track-download" type="button" data-file="${encodeURIComponent(track.file)}" aria-label="Download ${track.title}" title="Download track">
+              <i class="fa-solid fa-download"></i>
+            </button>
+          `;
+
+          item.addEventListener("click", () => playTrack(i, true));
+
+          const dlBtn = item.querySelector(".track-download");
+          dlBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const file = decodeURIComponent(dlBtn.dataset.file);
+            downloadSingleTrack(file);
           });
 
-        renderTracklist();
-        if (tracks.length > 0) {
-          await preloadTrackData();
-          renderTracklist();
-          initAmplitudePlayer();
-        }
-        btnDownloadAll.disabled = tracks.length === 0;
-      } catch {
-        tracklistEl.innerHTML = `<div class="error">Couldn't load tracks. <a href="${ALBUM_BASE}" style="color:inherit;text-decoration:underline">Browse directly →</a></div>`;
-        btnDownloadAll.disabled = true;
+          tracklistEl.appendChild(item);
+        });
+
+        updateActiveTrackStyling();
       }
+
+      async function loadTracks() {
+        try {
+          const res = await fetch(buildApiUrl(config.tracksApi, config.collection), { cache: "no-store" });
+          if (!res.ok) throw new Error(`Track API failed (${res.status})`);
+
+          const data = await res.json();
+          if (!Array.isArray(data.tracks) || data.tracks.length === 0) {
+            throw new Error("No tracks found");
+          }
+
+          tracks = data.tracks
+            .map((track) => {
+              const parsed = parseTrackFileName(track.file);
+              return {
+                url: track.url,
+                file: track.file,
+                title: parsed.title,
+                artist: parsed.artist,
+                trackNumber: parsed.trackNumber,
+                displayTitle: parsed.displayTitle,
+              };
+            })
+            .sort((a, b) => {
+              if (a.trackNumber !== null && b.trackNumber !== null) {
+                return a.trackNumber - b.trackNumber;
+              }
+              return a.file.localeCompare(b.file, undefined, { numeric: true });
+            });
+
+          renderTracklist();
+          btnDownloadAll.disabled = tracks.length === 0;
+
+          if (tracks.length > 0) {
+            playTrack(0, false);
+            await preloadTrackData();
+            renderTracklist();
+          }
+        } catch {
+          tracklistEl.innerHTML = `<div class="error">Couldn't load tracks. <a href="${config.browseUrl}" style="color:inherit;text-decoration:underline">Browse directly -></a></div>`;
+          btnDownloadAll.disabled = true;
+        }
+      }
+
+      audio.addEventListener("timeupdate", syncProgressAndTime);
+      audio.addEventListener("loadedmetadata", syncProgressAndTime);
+      audio.addEventListener("play", () => {
+        updatePlayIcon();
+        updateActiveTrackStyling();
+      });
+      audio.addEventListener("pause", () => {
+        updatePlayIcon();
+        updateActiveTrackStyling();
+      });
+      audio.addEventListener("ended", playNext);
+
+      progressBarBg.addEventListener("click", (e) => {
+        const duration = Number(audio.duration || 0);
+        if (duration <= 0) {
+          return;
+        }
+        const rect = progressBarBg.getBoundingClientRect();
+        const pct = (e.clientX - rect.left) / rect.width;
+        audio.currentTime = Math.max(0, Math.min(duration, pct * duration));
+        syncProgressAndTime();
+      });
+
+      btnPlay.addEventListener("click", togglePlay);
+      btnPrev.addEventListener("click", playPrev);
+      btnNext.addEventListener("click", playNext);
+      btnDownloadAll.addEventListener("click", downloadAllAsZip);
+
+      loadTracks();
     }
 
-    loadTracks();
+    initCollectionPlayer({
+      prefix: "main",
+      collection: "main",
+      coverArtUrl: "/2026-album.jpg",
+      tracksApi: "/api/tracks",
+      downloadApi: "/api/download",
+      streamApi: "/api/stream",
+      browseUrl: MAIN_BASE,
+      zipFileName: "doug-mcarthur-2026-demos.zip",
+      ids: {
+        tracklist: "main-tracklist",
+        nowPlayingTitle: "main-now-playing-title",
+        nowPlayingMedia: "main-now-playing-media",
+        nowPlayingArt: "main-now-playing-art",
+        progressFill: "main-progress-fill",
+        timeCurrent: "main-time-current",
+        timeTotal: "main-time-total",
+        btnPlay: "main-btn-play",
+        btnPrev: "main-btn-prev",
+        btnNext: "main-btn-next",
+        iconPlay: "main-icon-play",
+        iconPause: "main-icon-pause",
+        progressBarBg: "main-progress-bar-bg",
+        btnDownloadAll: "main-btn-download-all",
+      },
+    });
+
+    initCollectionPlayer({
+      prefix: "bsides",
+      collection: "bsides",
+      coverArtUrl: "/b-sides.jpg",
+      tracksApi: "/api/tracks",
+      downloadApi: "/api/download",
+      streamApi: "/api/stream",
+      browseUrl: BSIDES_BASE,
+      zipFileName: "doug-mcarthur-b-sides.zip",
+      ids: {
+        tracklist: "bsides-tracklist",
+        nowPlayingTitle: "bsides-now-playing-title",
+        nowPlayingMedia: "bsides-now-playing-media",
+        nowPlayingArt: "bsides-now-playing-art",
+        progressFill: "bsides-progress-fill",
+        timeCurrent: "bsides-time-current",
+        timeTotal: "bsides-time-total",
+        btnPlay: "bsides-btn-play",
+        btnPrev: "bsides-btn-prev",
+        btnNext: "bsides-btn-next",
+        iconPlay: "bsides-icon-play",
+        iconPause: "bsides-icon-pause",
+        progressBarBg: "bsides-progress-bar-bg",
+        btnDownloadAll: "bsides-btn-download-all",
+      },
+    });
   </script>
 </body>
 </html>

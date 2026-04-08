@@ -1,4 +1,14 @@
-const ALBUM_BASE = "https://dougmcarthur.net/2026-album/";
+const DEFAULT_ALBUM_BASE = "https://dougmcarthur.net/2026-album/";
+const DEFAULT_BSIDES_BASE = "https://dougmcarthur.net/mp3/b-sides/";
+
+function getAlbumBase(request, env) {
+  const url = new URL(request.url);
+  const collection = (url.searchParams.get("collection") || "main").toLowerCase();
+  if (collection === "bsides") {
+    return env?.BSIDES_AUDIO_BASE_URL || DEFAULT_BSIDES_BASE;
+  }
+  return env?.MAIN_AUDIO_BASE_URL || DEFAULT_ALBUM_BASE;
+}
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -18,7 +28,9 @@ function isValidTrackFile(file) {
   return true;
 }
 
-export async function onRequestGet({ request }) {
+export async function onRequestGet({ request, env }) {
+  const albumBase = getAlbumBase(request, env);
+
   try {
     const url = new URL(request.url);
     const file = url.searchParams.get("file") || "";
@@ -27,7 +39,7 @@ export async function onRequestGet({ request }) {
       return json({ error: "Invalid file parameter" }, 400);
     }
 
-    const sourceUrl = new URL(file, ALBUM_BASE).toString();
+    const sourceUrl = new URL(file, albumBase).toString();
     const upstream = await fetch(sourceUrl, {
       cf: {
         cacheTtl: 300,

@@ -1,4 +1,14 @@
-const ALBUM_BASE = "https://dougmcarthur.net/2026-album/";
+const DEFAULT_ALBUM_BASE = "https://dougmcarthur.net/2026-album/";
+const DEFAULT_BSIDES_BASE = "https://dougmcarthur.net/mp3/b-sides/";
+
+function getAlbumBase(request, env) {
+  const url = new URL(request.url);
+  const collection = (url.searchParams.get("collection") || "main").toLowerCase();
+  if (collection === "bsides") {
+    return env?.BSIDES_AUDIO_BASE_URL || DEFAULT_BSIDES_BASE;
+  }
+  return env?.MAIN_AUDIO_BASE_URL || DEFAULT_ALBUM_BASE;
+}
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -16,9 +26,11 @@ function getFileName(urlString) {
   return decodeURIComponent(segments[segments.length - 1] || "");
 }
 
-export async function onRequestGet() {
+export async function onRequestGet({ request, env }) {
+  const albumBase = getAlbumBase(request, env);
+
   try {
-    const upstream = await fetch(ALBUM_BASE, {
+    const upstream = await fetch(albumBase, {
       headers: {
         "user-agent": "music-pages-track-loader/1.0",
       },
@@ -40,7 +52,7 @@ export async function onRequestGet() {
 
     while ((match = hrefRegex.exec(html)) !== null) {
       try {
-        const absolute = new URL(match[1], ALBUM_BASE).toString();
+        const absolute = new URL(match[1], albumBase).toString();
         const file = getFileName(absolute);
         if (!file || seen.has(file.toLowerCase())) {
           continue;
