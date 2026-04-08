@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Doug McArthur — B-Sides</title>
-  <meta property="og:image" content="https://dougmcarthur.net/mp3/b-sides/folder.jpg" />
+  <meta property="og:image" content="/b-sides.jpg" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -444,6 +444,41 @@
       color: var(--accent);
     }
 
+    .footer-nav-card {
+      display: inline-block;
+      margin: 12px auto 10px;
+      text-decoration: none;
+      color: inherit;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
+      transition: transform 0.15s, box-shadow 0.15s;
+      max-width: 280px;
+    }
+
+    .footer-nav-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .footer-nav-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+    }
+
+    .footer-nav-card-label {
+      display: block;
+      background: rgba(255, 255, 255, 0.95);
+      color: var(--text);
+      font-size: 0.74rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 10px 12px;
+    }
+
     .playing-dots {
       display: none;
       gap: 3px;
@@ -611,7 +646,10 @@
 
     <footer class="footer">
       <a href="https://links.dougmcarthur.net">dougmcarthur.net</a>
-      <div><a href="/">Back to Main Demos</a></div>
+      <a class="footer-nav-card" href="/" aria-label="Open main demos page">
+        <img src="/2026-album.jpg" alt="2026 Album cover art" />
+        <span class="footer-nav-card-label">Back to Main Demos</span>
+      </a>
       <div>© 2026 Doug McArthur Music</div>
     </footer>
   </div>
@@ -620,7 +658,7 @@
   <script src="https://cdn.jsdelivr.net/npm/amplitudejs@5.3.2/dist/amplitude.min.js"></script>
   <script>
     const ALBUM_BASE = "https://dougmcarthur.net/mp3/b-sides/";
-    const COVER_ART_URL = `${ALBUM_BASE}folder.jpg`;
+    const COVER_ART_URL = "/b-sides.jpg";
     const TRACKS_API = "/api/bsides/tracks";
     const DOWNLOAD_API = "/api/bsides/download";
     const STREAM_API = "/api/bsides/stream";
