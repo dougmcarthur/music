@@ -6,13 +6,6 @@ A simple Cloudflare Pages site with an embedded audio player for listening to de
 
 The page loads tracks through a Cloudflare Pages Function (`/api/tracks`) that fetches and parses `https://dougmcarthur.net/2026-album/` server-side, then populates a custom HTML5 audio player. This avoids browser CORS issues when listing `.mp3` files from the remote directory.
 
-Audio source base URLs are configurable through environment variables, so you can migrate storage to Cloudflare R2 without changing frontend code:
-
-- `MAIN_AUDIO_BASE_URL` (defaults to `https://dougmcarthur.net/2026-album/`)
-- `BSIDES_AUDIO_BASE_URL` (defaults to `https://dougmcarthur.net/mp3/b-sides/`)
-
-Set these in Cloudflare Pages project environment variables (Production/Preview) or in `wrangler.toml` for local development.
-
 ## Deploy
 
 Deploys automatically via [Cloudflare Pages](https://pages.cloudflare.com/) on push.

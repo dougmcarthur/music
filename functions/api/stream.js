@@ -1,13 +1,13 @@
 const DEFAULT_ALBUM_BASE = "https://dougmcarthur.net/2026-album/";
 const DEFAULT_BSIDES_BASE = "https://dougmcarthur.net/mp3/b-sides/";
 
-function getAlbumBase(request, env) {
+function getAlbumBase(request) {
   const url = new URL(request.url);
   const collection = (url.searchParams.get("collection") || "main").toLowerCase();
   if (collection === "bsides") {
-    return env?.BSIDES_AUDIO_BASE_URL || DEFAULT_BSIDES_BASE;
+    return DEFAULT_BSIDES_BASE;
   }
-  return env?.MAIN_AUDIO_BASE_URL || DEFAULT_ALBUM_BASE;
+  return DEFAULT_ALBUM_BASE;
 }
 
 function json(body, status = 200) {
@@ -28,8 +28,8 @@ function isValidTrackFile(file) {
   return true;
 }
 
-export async function onRequestGet({ request, env }) {
-  const albumBase = getAlbumBase(request, env);
+export async function onRequestGet({ request }) {
+  const albumBase = getAlbumBase(request);
 
   try {
     const requestUrl = new URL(request.url);
