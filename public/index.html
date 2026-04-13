@@ -1023,7 +1023,9 @@
 
       async function loadTracks() {
         try {
-          const res = await fetch(buildApiUrl(config.tracksApi, config.collection), { cache: "no-store" });
+          const tracksApiUrl = buildApiUrl(config.tracksApi, config.collection);
+          const freshTracksApiUrl = `${tracksApiUrl}${tracksApiUrl.includes("?") ? "&" : "?"}_=${Date.now()}`;
+          const res = await fetch(freshTracksApiUrl, { cache: "no-store" });
           if (!res.ok) throw new Error(`Track API failed (${res.status})`);
 
           const data = await res.json();

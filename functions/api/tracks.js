@@ -15,7 +15,7 @@ function json(body, status = 200) {
     status,
     headers: {
       "content-type": "application/json; charset=utf-8",
-      "cache-control": "public, max-age=300",
+      "cache-control": "no-store",
     },
   });
 }
@@ -34,10 +34,6 @@ export async function onRequestGet({ request }) {
       headers: {
         "user-agent": "music-pages-track-loader/1.0",
       },
-      cf: {
-        cacheTtl: 300,
-        cacheEverything: true,
-      },
     });
 
     if (!upstream.ok) {
@@ -45,14 +41,15 @@ export async function onRequestGet({ request }) {
     }
 
     const html = await upstream.text();
-    const hrefRegex = /href\s*=\s*["']([^"']+\.mp3(?:\?[^"']*)?)["']/gi;
+    const hrefRegex = /href\s*=\s*(?:"([^"]+\.mp3(?:\?[^"]*)?)"|'([^']+\.mp3(?:\?[^']*)?)'|([^\s>]+\.mp3(?:\?[^\s>]*)?))/gi;
     const seen = new Set();
     const tracks = [];
     let match;
 
     while ((match = hrefRegex.exec(html)) !== null) {
       try {
-        const absolute = new URL(match[1], albumBase).toString();
+        const href = match[1] || match[2] || match[3] || "";
+        const absolute = new URL(href, albumBase).toString();
         const file = getFileName(absolute);
         if (!file || seen.has(file.toLowerCase())) {
           continue;
