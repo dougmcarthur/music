@@ -6,6 +6,10 @@
     "dev": "wrangler pages dev public",
     "deploy": "wrangler pages deploy public"
   },
+  "scripts": {
+    "dev": "wrangler pages dev public",
+    "deploy": "wrangler pages deploy public"
+  },
   "devDependencies": {
     "wrangler": "^4.81.0"
   }
