@@ -22,6 +22,27 @@
             sendPageview();
         });
     </script>
+    <!-- Pageview tracking -->
+    <script>
+        async function sendPageview() {
+            try {
+                const response = await fetch('/api/pageview', { 
+                    method: 'POST',
+                    mode: 'background' // Don't block page load
+                });
+                
+                if (!response.ok) {
+                    console.error('Failed to send pageview:', await response.json());
+                }
+            } catch (error) {
+                console.error('Pageview error:', error);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            sendPageview();
+        });
+    </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Doug McArthur — 2026 Demos and B-Sides</title>
