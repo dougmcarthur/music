@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — Doug McArthur</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #f5f7f9;
+      --surface: #ffffff;
+      --border: rgba(0,0,0,0.08);
+      --text: #1a1a1a;
+      --text-dim: #666;
+      --accent: rgba(103,156,139,1);
+      --accent-soft: rgba(103,156,139,0.12);
+      --danger: #c0564f;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, "Segoe UI", sans-serif;
+      min-height: 100vh;
+      padding: 32px 16px 64px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      margin-bottom: 32px;
+    }
+
+    /* Login form */
+    #login-screen {
+      max-width: 360px;
+      margin: 80px auto 0;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 32px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+      text-align: center;
+    }
+
+    #login-screen h2 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    #login-screen p {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      margin-bottom: 24px;
+    }
+
+    .field {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    input[type="password"] {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    input[type="password"]:focus {
+      border-color: var(--accent);
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.9rem;
+      font-family: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .btn:hover { opacity: 0.88; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .error-msg {
+      color: var(--danger);
+      font-size: 0.82rem;
+      margin-top: 8px;
+      min-height: 18px;
+    }
+
+    /* Dashboard */
+    #dashboard { display: none; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+      color: var(--text-dim);
+      margin-bottom: 20px;
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 240px;
+    }
+
+    /* Vote table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    th {
+      text-align: left;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-dim);
+      padding: 0 0 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 11px 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-dim);
+    }
+
+    tr:last-child td { border-bottom: none; }
+
+    td:first-child { color: var(--text); font-weight: 500; }
+
+    .rank {
+      width: 28px;
+      color: var(--text-dim);
+      font-size: 0.78rem;
+    }
+
+    .votes-cell {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      color: var(--accent) !important;
+    }
+
+    .bar-wrap {
+      padding: 4px 16px;
+    }
+
+    .bar-bg {
+      height: 6px;
+      background: var(--accent-soft);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      padding: 32px 0;
+    }
+
+    .stat-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    .stat-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 28px;
+    }
+
+    .logout-btn {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 12px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: border-color 0.15s, color 0.15s;
+    }
+
+    .logout-btn:hover {
+      border-color: var(--text-dim);
+      color: var(--text);
+    }
+
+    .loading-overlay {
+      text-align: center;
+      padding: 80px 0;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Login -->
+  <div id="login-screen">
+    <h2>Admin Dashboard</h2>
+    <p>Enter your admin key to view visitor stats and vote leaderboard.</p>
+    <div class="field">
+      <input type="password" id="key-input" placeholder="Admin key" autocomplete="current-password" />
+      <button class="btn" id="login-btn">Go</button>
+    </div>
+    <div class="error-msg" id="login-error"></div>
+  </div>
+
+  <!-- Dashboard -->
+  <div id="dashboard">
+    <div class="header-row">
+      <div>
+        <h1>Dashboard</h1>
+        <div class="subtitle">Doug McArthur — music.dougmcarthur.net</div>
+      </div>
+      <button class="logout-btn" id="logout-btn">Sign out</button>
+    </div>
+
+    <div id="loading-overlay" class="loading-overlay">Loading stats…</div>
+    <div id="stats-content" style="display:none">
+
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-label">Visitors today</div>
+          <div class="stat-value" id="stat-today">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Visitors last 7 days</div>
+          <div class="stat-value" id="stat-week">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Visitors last 30 days</div>
+          <div class="stat-value" id="stat-month">—</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Unique Visitors — Last 30 Days</div>
+        <div class="chart-wrap">
+          <canvas id="visitors-chart"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Track Upvotes — Leaderboard</div>
+        <div id="vote-table-wrap"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+  let adminKey = sessionStorage.getItem("adminKey") || "";
+  let visitorChart = null;
+
+  const loginScreen = document.getElementById("login-screen");
+  const dashboard = document.getElementById("dashboard");
+  const keyInput = document.getElementById("key-input");
+  const loginBtn = document.getElementById("login-btn");
+  const loginError = document.getElementById("login-error");
+  const logoutBtn = document.getElementById("logout-btn");
+  const loadingOverlay = document.getElementById("loading-overlay");
+  const statsContent = document.getElementById("stats-content");
+
+  async function fetchStats(key) {
+    const res = await fetch("/api/admin-stats", {
+      headers: { Authorization: `Bearer ${key}` },
+    });
+    if (res.status === 401) throw new Error("unauthorized");
+    if (!res.ok) throw new Error("server error");
+    return res.json();
+  }
+
+  function renderVisitorChart(visitors) {
+    const labels = visitors.map(v => {
+      const [, m, d] = v.date.split("-");
+      return `${parseInt(m)}/${parseInt(d)}`;
+    });
+    const data = visitors.map(v => v.count);
+
+    if (visitorChart) visitorChart.destroy();
+
+    const ctx = document.getElementById("visitors-chart").getContext("2d");
+    visitorChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [{
+          label: "Unique Visitors",
+          data,
+          backgroundColor: "rgba(103,156,139,0.5)",
+          borderColor: "rgba(103,156,139,1)",
+          borderWidth: 1.5,
+          borderRadius: 4,
+        }],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              title: (items) => visitors[items[0].dataIndex].date,
+              label: (item) => ` ${item.raw} unique visitor${item.raw !== 1 ? "s" : ""}`,
+            },
+          },
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { font: { size: 11 }, maxRotation: 45 },
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { stepSize: 1, font: { size: 11 } },
+            grid: { color: "rgba(0,0,0,0.05)" },
+          },
+        },
+      },
+    });
+  }
+
+  function renderVoteTable(votes) {
+    const wrap = document.getElementById("vote-table-wrap");
+    if (!votes.length) {
+      wrap.innerHTML = '<div class="empty-state">No votes recorded yet.</div>';
+      return;
+    }
+
+    const maxVotes = votes[0].votes || 1;
+    const rows = votes.map((v, i) => {
+      const pct = Math.round((v.votes / maxVotes) * 100);
+      const trackName = v.track.replace(/\.mp3$/i, "").replace(/[-_]/g, " ").trim();
+      return `
+        <tr>
+          <td class="rank">${i + 1}</td>
+          <td>${trackName}</td>
+          <td class="bar-wrap">
+            <div class="bar-bg"><div class="bar-fill" style="width:${pct}%"></div></div>
+          </td>
+          <td class="votes-cell">${v.votes}</td>
+        </tr>`;
+    }).join("");
+
+    wrap.innerHTML = `
+      <table>
+        <thead>
+          <tr>
+            <th class="rank">#</th>
+            <th>Track</th>
+            <th></th>
+            <th style="text-align:right">Votes</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  }
+
+  function updateSummaryStats(visitors) {
+    const today = visitors[visitors.length - 1]?.count ?? 0;
+    const week = visitors.slice(-7).reduce((s, v) => s + v.count, 0);
+    const month = visitors.reduce((s, v) => s + v.count, 0);
+    document.getElementById("stat-today").textContent = today;
+    document.getElementById("stat-week").textContent = week;
+    document.getElementById("stat-month").textContent = month;
+  }
+
+  async function showDashboard(key) {
+    loginScreen.style.display = "none";
+    dashboard.style.display = "block";
+    loadingOverlay.style.display = "block";
+    statsContent.style.display = "none";
+
+    try {
+      const data = await fetchStats(key);
+      updateSummaryStats(data.visitors);
+      renderVisitorChart(data.visitors);
+      renderVoteTable(data.votes);
+      loadingOverlay.style.display = "none";
+      statsContent.style.display = "block";
+    } catch (err) {
+      if (err.message === "unauthorized") {
+        sessionStorage.removeItem("adminKey");
+        adminKey = "";
+        dashboard.style.display = "none";
+        loginScreen.style.display = "block";
+        loginError.textContent = "Invalid key.";
+      } else {
+        loadingOverlay.textContent = "Failed to load stats. Try refreshing.";
+      }
+    }
+  }
+
+  async function handleLogin() {
+    const key = keyInput.value.trim();
+    if (!key) return;
+    loginBtn.disabled = true;
+    loginError.textContent = "";
+    try {
+      await showDashboard(key);
+      sessionStorage.setItem("adminKey", key);
+      adminKey = key;
+    } catch {
+      loginError.textContent = "Something went wrong.";
+    } finally {
+      loginBtn.disabled = false;
+    }
+  }
+
+  logoutBtn.addEventListener("click", () => {
+    sessionStorage.removeItem("adminKey");
+    adminKey = "";
+    dashboard.style.display = "none";
+    loginScreen.style.display = "block";
+    keyInput.value = "";
+  });
+
+  loginBtn.addEventListener("click", handleLogin);
+  keyInput.addEventListener("keydown", (e) => { if (e.key === "Enter") handleLogin(); });
+
+  // Auto-login if key is stored in session
+  if (adminKey) {
+    showDashboard(adminKey);
+  }
+</script>
+</body>
+</html>

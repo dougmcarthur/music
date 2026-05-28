@@ -1,198 +1,50 @@
-import { kv } from '@cloudflare/kv-store';
-import crypto from 'crypto';
-
-const STATS_KV = 'STATS_KV';
-
-function sha1(input) {
-    return crypto.createHash('sha1').update(input).digest('hex');
+function json(body, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { "content-type": "application/json", "cache-control": "no-store" },
+  });
 }
 
-export async function onRequestGet({ request }) {
-    const ip = request.headers.get('CF-Connecting-IP');
-    const date = new Date();
-    const dateStr = `${date.getFullYear()}-${String(date.getMonth()).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    
-    try {
-        // Create a unique daily token for the visitor
-        const hashInput = ip + dateStr;
-        const dailyToken = sha1(hashInput);
-        
-        // Check analytics in KV store
-        const existingVisit = await kv.get(`visitor:${dateStr}`);
-        
-        if (existingVisit === null) {
-            // New visitor for the day - increment count and cache key
-            await kv.set(`visitor:${dateStr}`, '1', { ttl: 24 * 60 * 60 });
-            
-            return json({ message: 'New unique visit recorded' }, 200);
-        } else {
-            // Already counted this IP today - do nothing
-            return json({ message: 'Visit already counted today' }, 304);
-        }
-    } catch (error) {
-        console.error('Pageview error:', error);
-        return json({ error: 'Failed to record pageview' }, 500);
+async function sha256hex(text) {
+  const buf = await crypto.subtle.digest(
+    "SHA-256",
+    new TextEncoder().encode(text)
+  );
+  return Array.from(new Uint8Array(buf))
+    .map((b) => b.toString(16).padStart(2, "0"))
+    .join("");
+}
+
+export async function onRequestPost({ request, env }) {
+  const kv = env.STATS_KV;
+  const ip = request.headers.get("CF-Connecting-IP") || "unknown";
+  const now = new Date();
+  const dateStr = [
+    now.getUTCFullYear(),
+    String(now.getUTCMonth() + 1).padStart(2, "0"),
+    String(now.getUTCDate()).padStart(2, "0"),
+  ].join("-");
+
+  try {
+    const hash = await sha256hex(ip + dateStr);
+    const dedupKey = `visitor:dedup:${hash}`;
+
+    const existing = await kv.get(dedupKey);
+    if (existing !== null) {
+      return json({ message: "already counted" });
     }
-}
-import { kv } from '@cloudflare/kv-store';
-import crypto from 'crypto';
 
-const STATS_KV = 'STATS_KV';
+    // Mark this IP as seen today (25h TTL to span timezone edge cases)
+    await kv.put(dedupKey, "1", { expirationTtl: 90000 });
 
-function sha1(input) {
-    return crypto.createHash('sha1').update(input).digest('hex');
-}
+    // Increment daily unique visitor count (keep 90 days)
+    const countKey = `visitor:count:${dateStr}`;
+    const current = await kv.get(countKey);
+    const newCount = (parseInt(current || "0", 10) + 1).toString();
+    await kv.put(countKey, newCount, { expirationTtl: 90 * 24 * 60 * 60 });
 
-export async function checkAndUpdateStats(ip, dateStr) {
-    const dailyKey = `visitor:${dateStr}`;
-    
-    try {
-        // Check if IP has already been counted today
-        const exists = await kv.get(dailyKey);
-        
-        if (exists === null) {
-            // New visitor for the day - increment count and cache key
-            await kv.set(dailyKey, '1', { ttl: 24 * 60 * 60 });
-            
-            return true; // Indicates new unique visit
-        } else {
-            // Already counted this IP today - do nothing
-            return false;
-        }
-    } catch (error) {
-        console.error('KV error:', error);
-        return false;
-    }
-}
-
-export async function onRequestGet({ request }) {
-    const ip = request.headers.get('CF-Connecting-IP');
-    const date = new Date();
-    const dateStr = `${date.getFullYear()}-${String(date.getMonth()).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    
-    try {
-        // Create a unique daily token for the visitor
-        const hashInput = ip + dateStr;
-        const dailyToken = sha1(hashInput);
-        
-        // Check analytics in KV store
-        const existingVisit = await checkAndUpdateStats(ip, dateStr);
-        
-        if (existingVisit) {
-            return json({ message: 'New unique visit recorded' }, 200);
-        } else {
-            return json({ message: 'Visit already counted today' }, 304);
-        }
-    } catch (error) {
-        console.error('Pageview error:', error);
-        return json({ error: 'Failed to record pageview' }, 500);
-    }
-}
-import { kv } from '@cloudflare/kv-store';
-import crypto from 'crypto';
-
-const STATS_KV = 'STATS_KV';
-
-function sha1(input) {
-    return crypto.createHash('sha1').update(input).digest('hex');
-}
-
-export async function checkAndUpdateStats(ip, dateStr) {
-    const dailyKey = `visitor:${dateStr}`;
-    
-    try {
-        // Check if IP has already been counted today
-        const exists = await kv.get(dailyKey);
-        
-        if (exists === null) {
-            // New visitor for the day - increment count and cache key
-            await kv.set(dailyKey, '1', { ttl: 24 * 60 * 60 });
-            
-            return true; // Indicates new unique visit
-        } else {
-            // Already counted this IP today - do nothing
-            return false;
-        }
-    } catch (error) {
-        console.error('KV error:', error);
-        return false;
-    }
-}
-
-export async function onRequestGet({ request }) {
-    const ip = request.headers.get('CF-Connecting-IP');
-    const date = new Date();
-    const dateStr = `${date.getFullYear()}-${String(date.getMonth()).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    
-    try {
-        // Create a unique daily token for the visitor
-        const hashInput = ip + dateStr;
-        const dailyToken = sha1(hashInput);
-        
-        // Check analytics in KV store
-        const existingVisit = await checkAndUpdateStats(ip, dateStr);
-        
-        if (existingVisit) {
-            return json({ message: 'New unique visit recorded' }, 200);
-        } else {
-            return json({ message: 'Visit already counted today' }, 304);
-        }
-    } catch (error) {
-        console.error('Pageview error:', error);
-        return json({ error: 'Failed to record pageview' }, 500);
-    }
-}
-import { kv } from '@cloudflare/kv-store';
-import crypto from 'crypto';
-
-const STATS_KV = 'STATS_KV';
-
-function sha1(input) {
-    return crypto.createHash('sha1').update(input).digest('hex');
-}
-
-export async function checkAndUpdateStats(ip, dateStr) {
-    const dailyKey = `visitor:${dateStr}`;
-    
-    try {
-        // Check if IP has already been counted today
-        const exists = await kv.get(dailyKey);
-        
-        if (exists === null) {
-            // New visitor for the day - increment count and cache key
-            await kv.set(dailyKey, '1', { ttl: 24 * 60 * 60 });
-            
-            return true; // Indicates new unique visit
-        } else {
-            // Already counted this IP today - do nothing
-            return false;
-        }
-    } catch (error) {
-        console.error('KV error:', error);
-        return false;
-    }
-}
-
-export async function onRequestGet({ request }) {
-    const ip = request.headers.get('CF-Connecting-IP');
-    const date = new Date();
-    const dateStr = `${date.getFullYear()}-${String(date.getMonth()).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-    
-    try {
-        // Create a unique daily token for the visitor
-        const hashInput = ip + dateStr;
-        const dailyToken = sha1(hashInput);
-        
-        // Check analytics in KV store
-        const existingVisit = await checkAndUpdateStats(ip, dateStr);
-        
-        if (existingVisit) {
-            return json({ message: 'New unique visit recorded' }, 200);
-        } else {
-            return json({ message: 'Visit already counted today' }, 304);
-        }
-    } catch (error) {
-        console.error('Pageview error:', error);
-        return json({ error: 'Failed to record pageview' }, 500);
-    }
+    return json({ message: "recorded" });
+  } catch (err) {
+    return json({ error: "failed to record pageview" }, 500);
+  }
 }

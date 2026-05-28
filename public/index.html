@@ -1,69 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Pageview tracking -->
-    <script>
-        async function sendPageview() {
-            try {
-                const response = await fetch('/api/pageview', { 
-                    method: 'POST',
-                    mode: 'background' // Don't block page load
-                });
-                
-                if (!response.ok) {
-                    console.error('Failed to send pageview:', await response.json());
-                }
-            } catch (error) {
-                console.error('Pageview error:', error);
-            }
-        }
-
-        window.addEventListener('load', () => {
-            sendPageview();
-        });
-    </script>
-    <!-- Pageview tracking -->
-    <script>
-        async function sendPageview() {
-            try {
-                const response = await fetch('/api/pageview', { 
-                    method: 'POST',
-                    mode: 'background' // Don't block page load
-                });
-                
-                if (!response.ok) {
-                    console.error('Failed to send pageview:', await response.json());
-                }
-            } catch (error) {
-                console.error('Pageview error:', error);
-            }
-        }
-
-        window.addEventListener('load', () => {
-            sendPageview();
-        });
-    </script>
-    <!-- Pageview tracking -->
-    <script>
-        async function sendPageview() {
-            try {
-                const response = await fetch('/api/pageview', { 
-                    method: 'POST',
-                    mode: 'background' // Don't block page load
-                });
-                
-                if (!response.ok) {
-                    console.error('Failed to send pageview:', await response.json());
-                }
-            } catch (error) {
-                console.error('Pageview error:', error);
-            }
-        }
-
-        window.addEventListener('load', () => {
-            sendPageview();
-        });
-    </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Doug McArthur — 2026 Demos and B-Sides</title>
@@ -417,61 +354,35 @@
       color: var(--text-dim);
     }
 
-    .track-download {
-      width: 30px;
-      height: 30px;
+    .track-vote {
+      display: flex;
+      align-items: center;
+      gap: 4px;
       border: none;
       background: transparent;
       color: var(--text-dimmer);
-      border-radius: 8px;
+      font-family: inherit;
+      font-size: 0.78rem;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      padding: 4px 6px;
+      border-radius: 6px;
       transition: background 0.15s, color 0.15s;
       flex-shrink: 0;
     }
 
-    .track-download:hover {
+    .track-vote:hover {
       background: var(--accent-soft);
       color: var(--accent);
     }
 
-    .bulk-actions {
-      margin-top: 14px;
-      display: flex;
-      justify-content: flex-end;
+    .track-vote.voted {
+      color: var(--accent);
     }
 
-    .zip-btn {
-      border: none;
-      border-radius: 999px;
-      background: linear-gradient(135deg, var(--accent), rgba(103, 156, 139, 0.85));
-      color: #fff;
-      font-family: inherit;
-      font-size: 0.82rem;
-      font-weight: 600;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-      padding: 11px 18px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: 0 6px 16px rgba(103, 156, 139, 0.32);
-      transition: transform 0.15s, box-shadow 0.15s;
-    }
-
-    .zip-btn:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 10px 22px rgba(103, 156, 139, 0.4);
-    }
-
-    .zip-btn:disabled {
-      cursor: not-allowed;
-      opacity: 0.55;
-      transform: none;
-      box-shadow: none;
+    .vote-count {
+      font-size: 0.72rem;
+      min-width: 12px;
+      text-align: left;
     }
 
     .loading {
@@ -601,7 +512,7 @@
         <img src="https://gravatar.com/avatar/52f4160bb4d0dbba6ee65ba1be0ffa2e1bbc46971e5cbfb4e9fc62a3a29b7614?v=1774738651000&size=256&d=initials" alt="Doug McArthur" class="profile-pic" />
         <h1>Doug McArthur</h1>
         <p class="subtitle">Winnipeg Singer-Songwriter</p>
-        <p class="sidebar-blurb">This page is for sharing private demos and B-sides. You can stream each track, download singles, or export each collection for offline review.</p>
+        <p class="sidebar-blurb">This page is for sharing private demos and B-sides. Stream each track and upvote your favourites.</p>
 
         <div class="social-icons">
           <a href="https://instagram.com/dougmcarthur" title="Instagram" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
@@ -616,7 +527,7 @@
       <main class="main-content">
         <section class="collection" aria-labelledby="main-demos-heading">
           <h2 class="section-heading" id="main-demos-heading">2026 Album Demos</h2>
-          <p class="section-description">Stream preview tracks below, download single songs, or grab the full collection.</p>
+          <p class="section-description">Stream preview tracks below and upvote your favourites.</p>
 
           <div class="player">
             <div class="player-layout">
@@ -667,18 +578,11 @@
           <div class="tracklist" id="main-tracklist">
             <div class="loading">Loading tracks...</div>
           </div>
-
-          <div class="bulk-actions">
-            <button class="zip-btn" id="main-btn-download-all" type="button" disabled>
-              <i class="fa-solid fa-download" aria-hidden="true"></i>
-              Download All
-            </button>
-          </div>
         </section>
 
         <section class="collection" aria-labelledby="bsides-heading">
           <h2 class="section-heading" id="bsides-heading">B-Sides</h2>
-          <p class="section-description">Stream B-sides below, download single songs, or grab the full collection.</p>
+          <p class="section-description">Stream B-sides below.</p>
 
           <div class="player">
             <div class="player-layout">
@@ -729,13 +633,6 @@
           <div class="tracklist" id="bsides-tracklist">
             <div class="loading">Loading tracks...</div>
           </div>
-
-          <div class="bulk-actions">
-            <button class="zip-btn" id="bsides-btn-download-all" type="button" disabled>
-              <i class="fa-solid fa-download" aria-hidden="true"></i>
-              Download All
-            </button>
-          </div>
         </section>
       </main>
     </div>
@@ -746,8 +643,12 @@
     </footer>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <script>
+    // Pageview beacon — fire once on load, deduplicated server-side by IP+date
+    window.addEventListener("load", () => {
+      fetch("/api/pageview", { method: "POST", keepalive: true }).catch(() => {});
+    });
+
     const MAIN_BASE = "https://dougmcarthur.net/2026-album/";
     const BSIDES_BASE = "https://dougmcarthur.net/mp3/b-sides/";
 
@@ -774,12 +675,7 @@
         const trackNumber = Number(parts[0]);
         const artist = parts[1];
         const title = parts.slice(2).join(" - ");
-        return {
-          trackNumber,
-          artist,
-          title,
-          displayTitle: `${artist} - ${title}`,
-        };
+        return { trackNumber, artist, title, displayTitle: `${artist} - ${title}` };
       }
 
       return {
@@ -790,51 +686,20 @@
       };
     }
 
-    function triggerBrowserDownload(url, fileName) {
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = fileName;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-    }
-
-    function getDurationFromBlob(blob) {
-      return new Promise((resolve) => {
-        const media = document.createElement("audio");
-        media.preload = "metadata";
-
-        const objectUrl = URL.createObjectURL(blob);
-        const cleanup = () => {
-          media.removeAttribute("src");
-          URL.revokeObjectURL(objectUrl);
-        };
-
-        media.addEventListener("loadedmetadata", () => {
-          const duration = Number(media.duration);
-          cleanup();
-          resolve(Number.isFinite(duration) ? duration : 0);
-        }, { once: true });
-
-        media.addEventListener("error", () => {
-          cleanup();
-          resolve(0);
-        }, { once: true });
-
-        media.src = objectUrl;
-        media.load();
-      });
-    }
-
     function buildApiUrl(base, collection, file) {
       const url = new URL(base, window.location.origin);
-      if (collection) {
-        url.searchParams.set("collection", collection);
-      }
-      if (file) {
-        url.searchParams.set("file", file);
-      }
+      if (collection) url.searchParams.set("collection", collection);
+      if (file) url.searchParams.set("file", file);
       return `${url.pathname}${url.search}`;
+    }
+
+    // Vote state persisted per session (prevents accidental double-votes)
+    const votedTracks = new Set(
+      JSON.parse(sessionStorage.getItem("votedTracks") || "[]")
+    );
+
+    function saveVotedTracks() {
+      sessionStorage.setItem("votedTracks", JSON.stringify([...votedTracks]));
     }
 
     function initCollectionPlayer(config) {
@@ -851,18 +716,13 @@
       const iconPlay = document.getElementById(config.ids.iconPlay);
       const iconPause = document.getElementById(config.ids.iconPause);
       const progressBarBg = document.getElementById(config.ids.progressBarBg);
-      const btnDownloadAll = document.getElementById(config.ids.btnDownloadAll);
 
       const audio = new Audio();
       audio.preload = "metadata";
 
       let tracks = [];
       let currentIndex = -1;
-      const durations = {};
-
-      function downloadUrlForFile(file) {
-        return buildApiUrl(config.downloadApi, config.collection, file);
-      }
+      const voteCounts = {};
 
       function streamUrlForFile(file) {
         return buildApiUrl(config.streamApi, config.collection, file);
@@ -887,11 +747,8 @@
         timeTotal.textContent = formatTime(duration);
 
         if (currentIndex >= 0 && duration > 0) {
-          durations[currentIndex] = duration;
           const durEl = document.getElementById(`${config.prefix}-dur-${currentIndex}`);
-          if (durEl) {
-            durEl.textContent = formatTime(duration);
-          }
+          if (durEl) durEl.textContent = formatTime(duration);
         }
       }
 
@@ -911,10 +768,7 @@
       }
 
       function syncNowPlaying() {
-        if (currentIndex < 0 || currentIndex >= tracks.length) {
-          return;
-        }
-
+        if (currentIndex < 0 || currentIndex >= tracks.length) return;
         const track = tracks[currentIndex];
         nowPlayingTitle.textContent = track.displayTitle;
         setNowPlayingArtwork(config.coverArtUrl);
@@ -924,9 +778,7 @@
       }
 
       function playTrack(index, autoplay = true) {
-        if (!Number.isInteger(index) || index < 0 || index >= tracks.length) {
-          return;
-        }
+        if (!Number.isInteger(index) || index < 0 || index >= tracks.length) return;
 
         const track = tracks[index];
         const nextUrl = streamUrlForFile(track.file);
@@ -973,12 +825,10 @@
 
       function togglePlay() {
         if (!tracks.length) return;
-
         if (currentIndex < 0) {
           playTrack(0, true);
           return;
         }
-
         if (audio.paused) {
           audio.play().catch(() => {});
         } else {
@@ -986,67 +836,39 @@
         }
       }
 
-      function downloadSingleTrack(file) {
-        triggerBrowserDownload(downloadUrlForFile(file), file);
-      }
-
-      async function preloadTrackData() {
-        for (let i = 0; i < tracks.length; i++) {
-          const track = tracks[i];
-
-          try {
-            const res = await fetch(downloadUrlForFile(track.file), { cache: "force-cache" });
-            if (!res.ok) continue;
-
-            const blob = await res.blob();
-            const duration = await getDurationFromBlob(blob);
-            if (duration > 0) {
-              durations[i] = duration;
-              const durEl = document.getElementById(`${config.prefix}-dur-${i}`);
-              if (durEl) {
-                durEl.textContent = formatTime(duration);
-              }
-            }
-          } catch {
-            // Continue preloading remaining tracks even if one fails.
-          }
-        }
-      }
-
-      async function downloadAllAsZip() {
-        if (!tracks.length || btnDownloadAll.disabled) return;
-        if (typeof window.JSZip === "undefined") {
-          alert("ZIP library failed to load. Try refreshing and retry.");
-          return;
-        }
-
-        btnDownloadAll.disabled = true;
-        const originalLabel = btnDownloadAll.innerHTML;
+      async function handleVote(file, btn, countEl) {
+        if (votedTracks.has(file)) return;
 
         try {
-          const zip = new window.JSZip();
-
-          for (let i = 0; i < tracks.length; i++) {
-            const track = tracks[i];
-            btnDownloadAll.innerHTML = `<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Zipping ${i + 1}/${tracks.length}`;
-            const res = await fetch(downloadUrlForFile(track.file));
-            if (!res.ok) {
-              throw new Error(`Failed to download ${track.file}`);
-            }
-            const blob = await res.blob();
-            zip.file(track.file, blob);
-          }
-
-          btnDownloadAll.innerHTML = '<i class="fa-solid fa-spinner fa-spin" aria-hidden="true"></i> Finalizing';
-          const zipBlob = await zip.generateAsync({ type: "blob" });
-          const zipUrl = URL.createObjectURL(zipBlob);
-          triggerBrowserDownload(zipUrl, config.zipFileName);
-          setTimeout(() => URL.revokeObjectURL(zipUrl), 1000);
+          const res = await fetch(`/api/votes?track=${encodeURIComponent(file)}`, {
+            method: "POST",
+          });
+          if (!res.ok) return;
+          const data = await res.json();
+          votedTracks.add(file);
+          saveVotedTracks();
+          voteCounts[file] = data.votes;
+          countEl.textContent = data.votes || "";
+          btn.classList.add("voted");
+          btn.title = "Voted!";
         } catch {
-          alert("Could not build download package. Please try again.");
-        } finally {
-          btnDownloadAll.disabled = false;
-          btnDownloadAll.innerHTML = originalLabel;
+          // Silently ignore vote errors
+        }
+      }
+
+      async function loadVoteCounts() {
+        if (!config.showVotes) return;
+        for (const track of tracks) {
+          try {
+            const res = await fetch(`/api/votes?track=${encodeURIComponent(track.file)}`);
+            if (!res.ok) continue;
+            const data = await res.json();
+            if (data.votes > 0) {
+              voteCounts[track.file] = data.votes;
+            }
+          } catch {
+            // Ignore
+          }
         }
       }
 
@@ -1057,26 +879,38 @@
           const item = document.createElement("div");
           item.className = "track-item" + (i === currentIndex ? " active" : "");
           item.dataset.index = i;
+
+          const alreadyVoted = votedTracks.has(track.file);
+          const count = voteCounts[track.file] || 0;
+
+          const voteBtn = config.showVotes
+            ? `<button class="track-vote${alreadyVoted ? " voted" : ""}" type="button"
+                data-file="${encodeURIComponent(track.file)}"
+                aria-label="Upvote ${track.title}"
+                title="${alreadyVoted ? "Voted!" : "Upvote"}">
+                <i class="fa-solid fa-heart" style="font-size:0.75rem"></i>
+                <span class="vote-count">${count || ""}</span>
+              </button>`
+            : "";
+
           item.innerHTML = `
-            <div class="playing-dots">
-              <span></span><span></span><span></span>
-            </div>
+            <div class="playing-dots"><span></span><span></span><span></span></div>
             <span class="track-num">${i + 1}</span>
             <span class="track-name">${track.title}</span>
-            <span class="track-duration" id="${config.prefix}-dur-${i}">${durations[i] ? formatTime(durations[i]) : ""}</span>
-            <button class="track-download" type="button" data-file="${encodeURIComponent(track.file)}" aria-label="Download ${track.title}" title="Download track">
-              <i class="fa-solid fa-download"></i>
-            </button>
+            <span class="track-duration" id="${config.prefix}-dur-${i}"></span>
+            ${voteBtn}
           `;
 
           item.addEventListener("click", () => playTrack(i, true));
 
-          const dlBtn = item.querySelector(".track-download");
-          dlBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            const file = decodeURIComponent(dlBtn.dataset.file);
-            downloadSingleTrack(file);
-          });
+          if (config.showVotes) {
+            const vb = item.querySelector(".track-vote");
+            const vc = item.querySelector(".vote-count");
+            vb.addEventListener("click", (e) => {
+              e.stopPropagation();
+              handleVote(track.file, vb, vc);
+            });
+          }
 
           tracklistEl.appendChild(item);
         });
@@ -1087,8 +921,8 @@
       async function loadTracks() {
         try {
           const tracksApiUrl = buildApiUrl(config.tracksApi, config.collection);
-          const freshTracksApiUrl = `${tracksApiUrl}${tracksApiUrl.includes("?") ? "&" : "?"}_=${Date.now()}`;
-          const res = await fetch(freshTracksApiUrl, { cache: "no-store" });
+          const freshUrl = `${tracksApiUrl}${tracksApiUrl.includes("?") ? "&" : "?"}_=${Date.now()}`;
+          const res = await fetch(freshUrl, { cache: "no-store" });
           if (!res.ok) throw new Error(`Track API failed (${res.status})`);
 
           const data = await res.json();
@@ -1115,37 +949,27 @@
               return a.file.localeCompare(b.file, undefined, { numeric: true });
             });
 
+          if (config.showVotes) await loadVoteCounts();
+
           renderTracklist();
-          btnDownloadAll.disabled = tracks.length === 0;
 
           if (tracks.length > 0) {
             playTrack(0, false);
-            await preloadTrackData();
-            renderTracklist();
           }
         } catch {
-          tracklistEl.innerHTML = `<div class="error">Couldn't load tracks. <a href="${config.browseUrl}" style="color:inherit;text-decoration:underline">Browse directly -></a></div>`;
-          btnDownloadAll.disabled = true;
+          tracklistEl.innerHTML = `<div class="error">Couldn't load tracks. <a href="${config.browseUrl}" style="color:inherit;text-decoration:underline">Browse directly →</a></div>`;
         }
       }
 
       audio.addEventListener("timeupdate", syncProgressAndTime);
       audio.addEventListener("loadedmetadata", syncProgressAndTime);
-      audio.addEventListener("play", () => {
-        updatePlayIcon();
-        updateActiveTrackStyling();
-      });
-      audio.addEventListener("pause", () => {
-        updatePlayIcon();
-        updateActiveTrackStyling();
-      });
+      audio.addEventListener("play", () => { updatePlayIcon(); updateActiveTrackStyling(); });
+      audio.addEventListener("pause", () => { updatePlayIcon(); updateActiveTrackStyling(); });
       audio.addEventListener("ended", playNext);
 
       progressBarBg.addEventListener("click", (e) => {
         const duration = Number(audio.duration || 0);
-        if (duration <= 0) {
-          return;
-        }
+        if (duration <= 0) return;
         const rect = progressBarBg.getBoundingClientRect();
         const pct = (e.clientX - rect.left) / rect.width;
         audio.currentTime = Math.max(0, Math.min(duration, pct * duration));
@@ -1155,7 +979,6 @@
       btnPlay.addEventListener("click", togglePlay);
       btnPrev.addEventListener("click", playPrev);
       btnNext.addEventListener("click", playNext);
-      btnDownloadAll.addEventListener("click", downloadAllAsZip);
 
       loadTracks();
     }
@@ -1165,10 +988,9 @@
       collection: "main",
       coverArtUrl: "/2026-album.jpg",
       tracksApi: "/api/tracks",
-      downloadApi: "/api/download",
       streamApi: "/api/stream",
       browseUrl: MAIN_BASE,
-      zipFileName: "doug-mcarthur-2026-demos.zip",
+      showVotes: true,
       ids: {
         tracklist: "main-tracklist",
         nowPlayingTitle: "main-now-playing-title",
@@ -1183,7 +1005,6 @@
         iconPlay: "main-icon-play",
         iconPause: "main-icon-pause",
         progressBarBg: "main-progress-bar-bg",
-        btnDownloadAll: "main-btn-download-all",
       },
     });
 
@@ -1192,10 +1013,9 @@
       collection: "bsides",
       coverArtUrl: "/b-sides.jpg",
       tracksApi: "/api/tracks",
-      downloadApi: "/api/download",
       streamApi: "/api/stream",
       browseUrl: BSIDES_BASE,
-      zipFileName: "doug-mcarthur-b-sides.zip",
+      showVotes: false,
       ids: {
         tracklist: "bsides-tracklist",
         nowPlayingTitle: "bsides-now-playing-title",
@@ -1210,7 +1030,6 @@
         iconPlay: "bsides-icon-play",
         iconPause: "bsides-icon-pause",
         progressBarBg: "bsides-progress-bar-bg",
-        btnDownloadAll: "bsides-btn-download-all",
       },
     });
   </script>
