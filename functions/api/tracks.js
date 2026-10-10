@@ -1,5 +1,5 @@
-const DEFAULT_ALBUM_BASE = "https://dougmcarthur.net/2026-album/";
-const DEFAULT_BSIDES_BASE = "https://dougmcarthur.net/mp3/b-sides/";
+const DEFAULT_ALBUM_BASE = "https://music.dougmcarthur.net/audio/2026-album/";
+const DEFAULT_BSIDES_BASE = "https://music.dougmcarthur.net/audio/b-sides/";
 
 function getAlbumBase(request) {
   const url = new URL(request.url);
