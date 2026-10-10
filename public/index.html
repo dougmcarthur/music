@@ -649,8 +649,8 @@
       fetch("/api/pageview", { method: "POST", keepalive: true }).catch(() => {});
     });
 
-    const MAIN_BASE = "https://dougmcarthur.net/2026-album/";
-    const BSIDES_BASE = "https://dougmcarthur.net/mp3/b-sides/";
+    const MAIN_BASE = "https://music.dougmcarthur.net/audio/2026-album/";
+    const BSIDES_BASE = "https://music.dougmcarthur.net/audio/b-sides/";
 
     function formatTime(sec) {
       if (isNaN(sec)) return "0:00";
