@@ -1,11 +1,15 @@
 const DEFAULT_ALBUM_BASE = "https://music.dougmcarthur.net/audio/2026-album/";
 const DEFAULT_BSIDES_BASE = "https://music.dougmcarthur.net/audio/b-sides/";
+const DEFAULT_ARCHIVE_BASE = "https://music.dougmcarthur.net/audio/archive/";
 
 function getAlbumBase(request) {
   const url = new URL(request.url);
   const collection = (url.searchParams.get("collection") || "main").toLowerCase();
   if (collection === "bsides") {
     return DEFAULT_BSIDES_BASE;
+  }
+  if (collection === "archive") {
+    return DEFAULT_ARCHIVE_BASE;
   }
   return DEFAULT_ALBUM_BASE;
 }
